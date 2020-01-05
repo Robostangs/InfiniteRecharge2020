@@ -11,7 +11,7 @@ public abstract class AutoMode {
 	
     protected abstract void run();
 
-    protected  void driveDistance(double seconds, double power, double distance, double threshold, double elevatorSetPoint, double ingestorPower){
+    protected  void driveDistance(double seconds, double power, double distance, double threshold, double ingestorPower){
 		//runCommand(new DriveDistance(seconds, power, distance, elevatorSetPoint, ingestorPower));
 	}
 	
@@ -24,7 +24,16 @@ public abstract class AutoMode {
     
     protected void  waitTime(double seconds){
     	//runCommand(new Wait(seconds));
-    }
+	}
+	
+
+	protected void shootFar(double power, double distance, double angle){
+		//runCommand(new shootFar(power, distance, angle));
+	}
+
+	protected void layup(double power, double distance, double angle){
+		//runCommand(new layup(power, distance, angle));
+	}
     
    
     
