@@ -7,6 +7,9 @@ public class Constants{
     public static final int TALON_LEFTBACK = -1;
     public static final int TALON_RIGHTBACK = -1;
 
+    public static final double LIMELIGHT_ANGLE = -1;
+    public static final double LIMELIGHT_HEIGHT = -1;
+    public static final double TARGET_HEIGHT = -1;
 
     
 
