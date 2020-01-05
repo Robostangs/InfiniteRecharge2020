@@ -144,7 +144,7 @@ public class DriveTrain
 
         
         if(isPidEnabled){
-        DriveTrain.arcadeDrive(calculate(), 0);
+        DriveTrain.arcadeDrive(1, 0);
         }
 	}
 
