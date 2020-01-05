@@ -27,6 +27,16 @@ public class TeleOp{
     }
     
     public static void run(){
+        if(DriveTrain.ispidEnabled()){
+            DriveTrain.targetedDrive(driver.getLeftStickYAxis());
+
+        }
+        else{
+            DriveTrain.arcadeDrive(driver.getLeftStickYAxis(),driver.getRightStickXAxis());
+        }
+
+
+
         if(manip.getYButton()){
             if(!press[0]){
                 power+=.01;

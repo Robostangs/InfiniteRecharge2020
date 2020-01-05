@@ -133,7 +133,7 @@ public class DriveTrain
 		}	
     }
     
-	public static void pidWrite(){
+	public static void targetedDrive(double power){
 		// TODO Auto-generated method stub
 		if (Math.abs(hyropid.getPositionError()) < 5d) {
 			hyropid.setPID(hyropid.getP(), .001, 0);
@@ -144,7 +144,7 @@ public class DriveTrain
 
         
         if(isPidEnabled){
-        DriveTrain.arcadeDrive(1, 0);
+            DriveTrain.arcadeDrive(hyropid.calculate(getAHRS()),power);
         }
 	}
 
