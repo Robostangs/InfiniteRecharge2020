@@ -7,9 +7,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 //import com.ctre.pheonix.motorcontrol.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
+
 
 public class DriveTrain
 {
