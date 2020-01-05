@@ -7,9 +7,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 //import com.ctre.pheonix.motorcontrol.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 
 
@@ -22,6 +21,7 @@ public class DriveTrain
     private static AHRS hyro;
     private static Solenoid shifter;
     private static PIDController hyropid;
+    private static boolean isPidEnabled = false;
 
 
     public static DriveTrain getInstance() {
@@ -36,12 +36,11 @@ public class DriveTrain
         leftBack = new CANSparkMax(Constants.TALON_LEFTBACK, MotorType.kBrushless);
         rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
         hyro = new AHRS(SPI.Port.kMXP);
-        /*hyropid = new PIDController(1, 0, 0, hyro, this);
-        hyropid.setInputRange(-180d, 180d);
-        hyropid.setOutputRange(-1.0, 1.0);
+        hyropid = new PIDController(Constants.HYRO_kP, Constants.HYRO_kI, Constants.HYRO_kD);
 
-        hyropid.setAbsoluteTolerance(2d);
-        hyropid.setContinuous(true);*/
+        hyropid.enableContinuousInput(-180, 180);
+
+        hyropid.setTolerance(1d);
 
         shifter = new Solenoid(Constants.SOLENOID_SHIFTER);
         
@@ -126,18 +125,17 @@ public class DriveTrain
     }
 
     public static void turnToAngle(double angle){
-		/*hyropid.setSetpoint(angle);
-		if(!hyropid.isEnabled()){
+		hyropid.setSetpoint(angle);
+		if(!ispidEnabled()){
 			System.out.println("PID Enabled");
 			hyropid.reset();
-			hyropid.enable();
-		}	*/
+			pidEnable();
+		}	
     }
     
-	//@Override
-	/*public void pidWrite(double output) {
+	public static void pidWrite(){
 		// TODO Auto-generated method stub
-		if (Math.abs(hyropid.getError()) < 5d) {
+		if (Math.abs(hyropid.getPositionError()) < 5d) {
 			hyropid.setPID(hyropid.getP(), .001, 0);
 		} else {
 			// I Zone
@@ -145,22 +143,22 @@ public class DriveTrain
         }
 
         
-        // if(output != 0){
-        DriveTrain.arcadeDrive(output, 0);
-        // }
-	}*/
+        if(isPidEnabled){
+        DriveTrain.arcadeDrive(1, 0);
+        }
+	}
 
-   /* public static void pidDisable(){
+   public static void pidDisable(){
         System.out.println("PID Disabled");
-        //hyropid.disable();
-    }*/
+        isPidEnabled = false;
+    }
 
-    /*public static void pidEnable(){
-        //hyropid.enable();
-    }*/
-    /*public static boolean ispidEnabled(){
-        return hyropid.isEnabled();
-    }*/
+    public static void pidEnable(){
+        isPidEnabled = true;
+    }
+    public static boolean ispidEnabled(){
+        return isPidEnabled;
+    }
 
 
 
