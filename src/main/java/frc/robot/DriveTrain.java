@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 //import com.ctre.pheonix.motorcontrol.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -16,11 +17,13 @@ public class DriveTrain
 {
     public static DriveTrain instance;
     static CANSparkMax rightFront, leftFront, rightBack, leftBack;
+
     private static CANPIDController pidControllerLeftFront, pidControllerRightFront;
     private static CANEncoder encoderLeftFront, encoderRightFront;
     private static AHRS hyro;
     private static PIDController hyropid;
     private static boolean isPidEnabled = false;
+
 
 
     public static DriveTrain getInstance() {
@@ -34,7 +37,7 @@ public class DriveTrain
         leftFront = new CANSparkMax(Constants.TALON_LEFTFRONT, MotorType.kBrushless);
         leftBack = new CANSparkMax(Constants.TALON_LEFTBACK, MotorType.kBrushless);
         rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
-       
+      
         hyro = new AHRS(SPI.Port.kMXP);
         hyropid = new PIDController(Constants.HYRO_kP, Constants.HYRO_kI, Constants.HYRO_kD);
 
@@ -117,7 +120,9 @@ public class DriveTrain
 		}	
     }
     
+
 	public static void targetedDrive(double power){
+
 
         if(isPidEnabled){
             DriveTrain.arcadeDrive(hyropid.calculate(getAHRS()),power);
@@ -137,5 +142,9 @@ public class DriveTrain
     }
 
 
+ }
 
-}
+
+
+
+
