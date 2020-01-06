@@ -27,6 +27,7 @@ public class TeleOp{
     }
     
     public static void run(){
+        //for testing
         if(manip.getYButton()){
             if(!press[0]){
                 power+=.01;

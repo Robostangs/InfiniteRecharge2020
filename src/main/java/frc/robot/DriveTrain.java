@@ -1,6 +1,10 @@
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 //import com.ctre.pheonix.motorcontrol.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -133,7 +137,7 @@ public class DriveTrain
 		}	
     }
     
-	public static void pidWrite(){
+	public static void pidWrite(){          //remove?
 		// TODO Auto-generated method stub
 		if (Math.abs(hyropid.getPositionError()) < 5d) {
 			hyropid.setPID(hyropid.getP(), .001, 0);
@@ -161,10 +165,9 @@ public class DriveTrain
     }
 
 
-    }
+ }
 
 
 
 
 
-}
