@@ -46,4 +46,25 @@ public class Limelight {
     public static double getTa(){
         return ta;
     }
+
+    public static void lineUp(){
+        if(tv==1){
+            double distance = Utils.dist(tx,ty);
+            
+
+        }
+        else{
+
+        }
+
+    }
+
+    public static double distToAngle(double dist){
+        return 0;
+
+    }
+    public static double distToVelocity(double dist){
+        return 0;
+
+    }
 }
