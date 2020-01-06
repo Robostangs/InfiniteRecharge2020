@@ -19,7 +19,6 @@ public class DriveTrain
     private static CANPIDController pidControllerLeftFront, pidControllerRightFront;
     private static CANEncoder encoderLeftFront, encoderRightFront;
     private static AHRS hyro;
-    private static Solenoid shifter;
     private static PIDController hyropid;
     private static boolean isPidEnabled = false;
 
@@ -35,14 +34,12 @@ public class DriveTrain
         leftFront = new CANSparkMax(Constants.TALON_LEFTFRONT, MotorType.kBrushless);
         leftBack = new CANSparkMax(Constants.TALON_LEFTBACK, MotorType.kBrushless);
         rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
+       
         hyro = new AHRS(SPI.Port.kMXP);
         hyropid = new PIDController(Constants.HYRO_kP, Constants.HYRO_kI, Constants.HYRO_kD);
 
         hyropid.enableContinuousInput(-180, 180);
-
         hyropid.setTolerance(1d);
-
-        shifter = new Solenoid(Constants.SOLENOID_SHIFTER);
         
         pidControllerRightFront = rightFront.getPIDController();
         pidControllerLeftFront = leftFront.getPIDController();
@@ -67,7 +64,6 @@ public class DriveTrain
 
         
         rightBack.follow(rightFront);
-        
         leftBack.follow(leftFront);
     }
 
@@ -89,18 +85,6 @@ public class DriveTrain
 
     public static double getAHRS(){
         return hyro.getAngle();
-    }
-
-    public static void shiftUp(){
-        shifter.set(true);
-    }
-
-    public static void shiftDown(){
-        shifter.set(false);
-    }
-
-    public static boolean getShifted(){
-        return shifter.get();
     }
 
     public static double getEncoderRight(){
@@ -134,15 +118,7 @@ public class DriveTrain
     }
     
 	public static void targetedDrive(double power){
-		// TODO Auto-generated method stub
-		if (Math.abs(hyropid.getPositionError()) < 5d) {
-			hyropid.setPID(hyropid.getP(), .001, 0);
-		} else {
-			// I Zone
-			hyropid.setPID(hyropid.getP(), 0, 0);
-        }
 
-        
         if(isPidEnabled){
             DriveTrain.arcadeDrive(hyropid.calculate(getAHRS()),power);
         }
