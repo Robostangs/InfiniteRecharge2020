@@ -50,7 +50,11 @@ public class Limelight {
     public static void lineUp(){
         if(tv==1){
             double distance = Utils.dist(tx,ty);
+            Shooter.setFarAngle(Utils.distToAngle(distance));
+            Shooter.shootAtVelocity(Utils.distToVelocity(distance));
             
+
+
 
         }
         else{
@@ -59,12 +63,5 @@ public class Limelight {
 
     }
 
-    public static double distToAngle(double dist){
-        return 0;
-
-    }
-    public static double distToVelocity(double dist){
-        return 0;
-
-    }
+    
 }

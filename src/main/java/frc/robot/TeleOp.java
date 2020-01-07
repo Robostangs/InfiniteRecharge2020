@@ -9,7 +9,7 @@ public class TeleOp{
     //for tuning
     public static boolean[] press = new boolean[8];
 
-    public static double power;
+    public static int velocity;
     public static double angle;
 
 
@@ -22,13 +22,14 @@ public class TeleOp{
     private TeleOp(){
 		driver = new XBoxController(Constants.XBOX_DRIVER);
         manip = new XBoxController(Constants.XBOX_MANIP);
-        power = 0;
+        velocity = 0;
         angle = 0;
     }
     
     public static void run(){
 
         if(DriveTrain.ispidEnabled()){
+            Limelight.lineUp();
             DriveTrain.targetedDrive(driver.getLeftStickYAxis());
 
         }
@@ -41,7 +42,7 @@ public class TeleOp{
 
         if(manip.getYButton()){
             if(!press[0]){
-                power+=.01;
+                velocity+=1;
                 press[0] = true;
             }
         }
@@ -50,7 +51,7 @@ public class TeleOp{
         }
         if(manip.getAButton()){
             if(!press[1]){
-                power-=.01;
+                velocity-=1;
                 press[1] = true;
             }
         }
@@ -59,7 +60,7 @@ public class TeleOp{
         }
         if(manip.getBButton()){
             if(!press[2]){
-                power+=.1;
+                velocity+=10;
                 press[2] = true;
             }
         }
@@ -68,7 +69,7 @@ public class TeleOp{
         }
         if(manip.getXButton()){
             if(!press[3]){
-                power-=.1;
+                velocity-=10;
                 press[3] = true;
             }
         }
@@ -112,7 +113,7 @@ public class TeleOp{
             press[7] = false;
         }
 
-        SmartDashboard.putNumber("Power",power);
+        SmartDashboard.putNumber("Velocity",velocity);
         SmartDashboard.putNumber("Angle",angle);
 
     }
