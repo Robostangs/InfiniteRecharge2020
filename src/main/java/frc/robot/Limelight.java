@@ -46,4 +46,22 @@ public class Limelight {
     public static double getTa(){
         return ta;
     }
+
+    public static void lineUp(){
+        if(tv==1){
+            double distance = Utils.dist(tx,ty);
+            Shooter.setFarAngle(Utils.distToAngle(distance));
+            Shooter.shootAtVelocity(Utils.distToVelocity(distance));
+            
+
+
+
+        }
+        else{
+
+        }
+
+    }
+
+    
 }
