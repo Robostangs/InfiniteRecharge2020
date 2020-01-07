@@ -38,6 +38,9 @@ public class Constants{
 	public static final double LAUNCHER_kI = 0;
 	public static final double LAUNCHER_kD = 0;
 
+	public static final double HOOD_TOLERANCE = 1;
+	public static final double VELOCITY_TOLERANCE = 100;
+
 
 
     

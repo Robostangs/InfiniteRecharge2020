@@ -55,6 +55,15 @@ public class Shooter{
         
     }
 
+    public static void dispense(){
+        
+    }
+
+
+
+    public static double getServoAng(){
+        return shooterAngle.getAngle();
+    }
    
     /*///
     *   Launcher PID Methods
@@ -68,6 +77,10 @@ public class Shooter{
     public static double getPosError()
     {
         return launcherPID.getPositionError();
+    }
+
+    public static double getVelocity(){
+        return launcher.getSelectedSensorVelocity();
     }
 
 

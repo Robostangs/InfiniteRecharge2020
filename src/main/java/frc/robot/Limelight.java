@@ -50,8 +50,15 @@ public class Limelight {
     public static void lineUp(){
         if(tv==1){
             double distance = Utils.dist(tx,ty);
-            Shooter.setFarAngle(Utils.distToAngle(distance));
-            Shooter.shootAtVelocity(Utils.distToVelocity(distance));
+            double ang = Utils.distToAngle(distance);
+            double pow = Utils.distToVelocity(distance); 
+            Shooter.setFarAngle(ang);
+            Shooter.shootAtVelocity(pow);
+            if(Shooter.getServoAng()>=ang-Constants.HOOD_TOLERANCE&&Shooter.getServoAng()<=ang+Constants.HOOD_TOLERANCE){
+                if(Shooter.getVelocity()>=pow-Constants.VELOCITY_TOLERANCE&&Shooter.getVelocity()<=pow+Constants.VELOCITY_TOLERANCE){
+                    Shooter.dispense();
+                }
+            }
             
 
 
