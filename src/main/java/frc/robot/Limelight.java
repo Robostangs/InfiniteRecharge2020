@@ -53,10 +53,12 @@ public class Limelight {
 
 
             double distance = Utils.dist(tx,ty);
+
             double ang = Utils.distToAngle(distance);
             double pow = Utils.distToVelocity(distance); 
             Shooter.setFarAngle(ang);
             Shooter.shootAtVelocity(pow);
+
             
 
 

@@ -76,10 +76,17 @@ public class DriveTrain
         pidControllerLeftFront.setReference(powerLeft, ControlType.kDutyCycle);
     }
 
+    //No PID
     public static void drivePower(double powerLeft, double powerRight){
         rightFront.set(powerRight);
         leftFront.set(powerLeft);
     }
+
+    public static void stop(double left, double right){
+        rightFront.set(0);
+        leftFront.set(0);
+    }
+    
 
     public static void arcadeDrive(double fwd, double tur) {
         //Arcade Drive      
