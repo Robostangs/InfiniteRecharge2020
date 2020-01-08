@@ -21,7 +21,7 @@ public class Utils{
     }
 
     public static double degToRad(double x){
-        return Math.PI/(180.0*x);
+        return (Math.PI/180.0)*x;
     }
 
     public static double distToAngle(double dist){
