@@ -38,6 +38,7 @@ public class Shooter{
 
     public static void setFarAngle(double angle){
         shooterAngle.setAngle(angle);
+        //change to a setpoint 0-1 for actuator, testing required...
         
     }
 
