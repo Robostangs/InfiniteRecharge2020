@@ -13,8 +13,7 @@ public class Shooter{
     //shooter motor controllers
     private static Servo shooterAngle; 
     private static TalonSRX launcher;
-    
-    private static PIDController anglePID;
+
     private static PIDController launcherPID;
 
     public static Shooter getInstance(){
@@ -30,11 +29,6 @@ public class Shooter{
         //encoder for launcher
 
 
-    //shooter angle PID
-        anglePID = new PIDController(Constants.ANGLE_kP, Constants.ANGLE_kI, Constants.ANGLE_kD); //need period? 
-        anglePID.enableContinuousInput(-180, 180); //likely subject to change
-        anglePID.setTolerance(1d); //also subject to change
-
     //motor pid
         launcherPID = new PIDController(Constants.LAUCHER_kP, Constants.LAUNCHER_kI, Constants.LAUNCHER_kD);
         launcherPID.enableContinuousInput(-180, 180); 
@@ -42,36 +36,23 @@ public class Shooter{
         
     }
 
-    public static double setFarAngle(double power){
-        //anglePID.calculate(shooterAngle.get(), solve for angle in trajectory UAM)   Run this whenever Manip has limelight activated
-        //if(angleIsAtSetpoint() = true)
-            //disable pid if possible
-        return 0;
+    public static void setFarAngle(double angle){
+        shooterAngle.setAngle(angle);
+        
     }
 
-    public static double setLayupAngle(double setAngle){
-        return anglePID.calculate(shooterAngle.get(), Constants.SHOOTER_LAYUP_ANGLE);
+    public static void setLayupAngle(){
+        shooterAngle.setAngle(Constants.SHOOTER_LAYUP_ANGLE);
+    }
+
+    public static void shootAtVelocity(double velo){
+        launcherPID.setSetpoint(velo);
+        shoot(launcherPID.calculate(launcher.getSelectedSensorVelocity()));
     }
 
     public static void shoot(double power){
         
         
-    }
-
-    
-
-    /*///
-     *   Shooter Angle PID Methods
-    *////
-
-    public static boolean angleIsAtSetpoint() 
-    {
-        return anglePID.atSetpoint();
-    }
-
-    public static double getAngleError()
-    {
-        return anglePID.getPositionError();
     }
 
    

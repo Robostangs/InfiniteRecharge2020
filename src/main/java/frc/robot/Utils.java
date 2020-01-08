@@ -24,4 +24,15 @@ public class Utils{
         return Math.PI/(180.0*x);
     }
 
+    public static double distToAngle(double dist){
+        return 0;
+
+    }
+
+    public static double distToVelocity(double dist){
+        return 0;
+
+    }
 }
+
+
