@@ -56,9 +56,16 @@ public class Shooter{
     }
 
     public static void dispense(){
-        
+
     }
 
+    public static void undispense(){
+
+    }
+
+    public static void stop(){
+        
+    }
 
 
     public static double getServoAng(){

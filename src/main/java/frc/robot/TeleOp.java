@@ -37,12 +37,19 @@ public class TeleOp{
             DriveTrain.arcadeDrive(driver.getLeftStickYAxis(),driver.getRightStickXAxis());
         }
 
+        if(false /*add button control here*/){
+            Shooter.dispense();
+        }
+        if(false /*add button here*/){
+            Shooter.undispense();
+        }
+
 
 
 
         if(manip.getYButton()){
             if(!press[0]){
-                velocity+=5;
+                velocity+=10;
                 press[0] = true;
             }
         }
@@ -51,7 +58,7 @@ public class TeleOp{
         }
         if(manip.getAButton()){
             if(!press[1]){
-                velocity-=5;
+                velocity-=10;
                 press[1] = true;
             }
         }
@@ -60,7 +67,7 @@ public class TeleOp{
         }
         if(manip.getBButton()){
             if(!press[2]){
-                velocity+=50;
+                velocity+=200;
                 press[2] = true;
             }
         }
@@ -69,7 +76,7 @@ public class TeleOp{
         }
         if(manip.getXButton()){
             if(!press[3]){
-                velocity-=50;
+                velocity-=200;
                 press[3] = true;
             }
         }

@@ -112,7 +112,7 @@ public class DriveTrain
     }
 
     public static void turnToAngle(double angle){
-		hyropid.setSetpoint(angle);
+		hyropid.setSetpoint(hyro.getAngle()+angle);
 		if(!ispidEnabled()){
 			System.out.println("PID Enabled");
 			hyropid.reset();
@@ -137,6 +137,11 @@ public class DriveTrain
     public static void pidEnable(){
         isPidEnabled = true;
     }
+
+    public static void stop(){
+        drivePower(0,0);
+    }
+
     public static boolean ispidEnabled(){
         return isPidEnabled;
     }
