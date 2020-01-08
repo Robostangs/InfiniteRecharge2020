@@ -11,19 +11,19 @@ public abstract class AutoMode {
 	
     protected abstract void run();
 
-    protected  void driveDistance(double seconds, double power, double distance, double threshold, double ingestorPower){
-		//runCommand(new DriveDistance(seconds, power, distance, elevatorSetPoint, ingestorPower));
+    protected  void driveStraight(double seconds, double power, double distance){
+		runCommand(new DriveDistance(seconds, power, distance));
 	}
 	
     
-    protected void turnToAngle(double seconds, double angle, double offset, double power, double setPoint){
-    	//runCommand(new TurnToAngle(seconds, angle, offset, power, setPoint));
+    protected void lookForTarget(double seconds, double angle, double offset, double power, double setPoint){
+    	//runCommand(new lookForTarget(seconds, angle, offset, power, setPoint));
     }
     
    
     
     protected void  waitTime(double seconds){
-    	//runCommand(new Wait(seconds));
+    	runCommand(new waitTime(seconds));
 	}
 	
 
