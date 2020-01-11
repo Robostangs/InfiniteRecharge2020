@@ -1,12 +1,12 @@
 package main.java.frc.AutoCommands;
 
 
-public class driveDistance extends AutoCommandBase{
+public class DriveDistance extends AutoCommandBase{
     private double power, distance, threshold, elevatorSetPoint, ingestorPower;
 
 	
 
-	public driveDistance(double timeOut, double power, double distance){
+	public DriveDistance(double timeOut, double power, double distance){
 
 		super(timeOut);
 
