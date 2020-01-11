@@ -1,11 +1,11 @@
 package main.java.frc.AutoCommands;
 
-public class lookForTarget extends AutoCommandBase{
+public class LookForTarget extends AutoCommandBase{
     private double power, direction;
 
 	
 
-	public lookForTarget(double timeOut, double power, Boolean isLeft){
+	public LookForTarget(double timeOut, double power, Boolean isLeft){
 
 		super(timeOut);
 
