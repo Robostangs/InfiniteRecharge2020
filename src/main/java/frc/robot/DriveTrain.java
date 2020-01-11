@@ -22,7 +22,6 @@ public class DriveTrain
     private static CANEncoder encoderLeftFront, encoderRightFront;
     private static AHRS hyro;
     private static PIDController hyropid;
-    private static boolean isPidEnabled = false;
 
 
 
@@ -119,39 +118,19 @@ public class DriveTrain
     }
 
     public static void turnToAngle(double angle){
-		hyropid.setSetpoint(hyro.getAngle()+angle);
-		if(!ispidEnabled()){
-			System.out.println("PID Enabled");
-			hyropid.reset();
-			pidEnable();
-		}	
+		hyropid.setSetpoint(hyro.getAngle()+angle);	
     }
     
 
 	public static void targetedDrive(double power){
-
-
-        if(isPidEnabled){
             DriveTrain.arcadeDrive(hyropid.calculate(getAHRS()),power);
-        }
 	}
 
-   public static void pidDisable(){
-        System.out.println("PID Disabled");
-        isPidEnabled = false;
-    }
-
-    public static void pidEnable(){
-        isPidEnabled = true;
-    }
 
     public static void stop(){
         drivePower(0,0);
     }
 
-    public static boolean ispidEnabled(){
-        return isPidEnabled;
-    }
 
 
  }
