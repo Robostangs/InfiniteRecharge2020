@@ -2,10 +2,10 @@ package main.java.frc.AutoCommands;
 
 
 
-public class waitTime extends AutoCommandBase{
+public class WaitTime extends AutoCommandBase{
 
 
-        public waitTime(double timeOut){
+        public WaitTime(double timeOut){
             super(timeOut);
         }
 
