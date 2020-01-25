@@ -1,18 +1,14 @@
+
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.Servo;
-
-import com.ctre.phoenix.motorcontrol.can.TalonFXPIDSetConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
-
-
-
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 public class Shooter {
 
@@ -29,7 +25,7 @@ public class Shooter {
     }
 
     public Shooter(){
-        launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
+        /*launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
         launcherRight = new TalonFX(Constants.SHOOTER_TALON_RIGHT);
 
         elevator = new TalonSRX(Constants.ELEVATOR_TALON);
@@ -73,7 +69,7 @@ public class Shooter {
         
         launcherLeft.set(ControlMode.Velocity, speed);
         launcherLeft.setInverted(true);
-        //launcherRight.setInverted(true);
+        //launcherRight.setInverted(true);*/
         
     }
 

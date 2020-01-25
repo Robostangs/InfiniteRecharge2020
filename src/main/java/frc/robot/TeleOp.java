@@ -3,98 +3,55 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TeleOp{
-    private static XBoxController driver;
-    private static XBoxController manip;
+    public static XBoxController driver, manip;
     public static TeleOp instance;
 
-    private static double speed;
-    private static double elevspeed;
-    private static double hoodPosition;
+    //for tuning
+    public static boolean[] press = new boolean[8];
 
-    private static double kP;
-    private static double kI;
-    private static double kD;
-    private static double kF;
+    public static int velocity;
+    public static double angle;
 
-    
 
-    public static TeleOp getInstance(){
-        if(instance == null)
-            instance = new TeleOp();
-        return instance;
+    public static TeleOp getInstance() {
+		if (instance == null)
+			instance = new TeleOp();
+		return instance;
     }
 
     private TeleOp(){
-        
-        driver = new XBoxController(Constants.XBOX_DRIVER);
+		driver = new XBoxController(Constants.XBOX_DRIVER);
         manip = new XBoxController(Constants.XBOX_MANIP);
-        speed = 0;
-        elevspeed = 0.3;
-        kP = 0.2;
-        kI = 0.000001;
-        kD = 5.1;
-        kF = 0.048;
-
-        
-
+        velocity = 0;
+        angle = 0;
     }
-
+    
     public static void run(){
 
+        /*if(false ){
+            Limelight.lineUp();
+            DriveTrain.targetedDrive(driver.getLeftStickYAxis());
 
-        
-        speed = SmartDashboard.getNumber("Jeff", speed);
-        elevspeed = SmartDashboard.getNumber("elevspeed",elevspeed);
-        hoodPosition = SmartDashboard.getNumber("Hood Position", -1);
-        
-
-        SmartDashboard.putNumber("kP",kP);
-        SmartDashboard.putNumber("kI",kI);
-        SmartDashboard.putNumber("kD",kD);
-        SmartDashboard.putNumber("kF",kF);
-
-
-        SmartDashboard.putNumber("temp", Shooter.getTemp());
-        SmartDashboard.putNumber("% Output", Shooter.getPercentOutput());
-        SmartDashboard.putNumber("Velocity",(15.0/50.0)*Shooter.getVelo());
-        Shooter.setkD(kD);
-        Shooter.setkI(kI);
-        Shooter.setkP(kP);
-        Shooter.setkF(kF);
-
-        
-        
-
-        //Shooter
-        if(driver.getAButton()){
-            Shooter.launch((50.0/15.0)*speed);
         }
         else{
-            Shooter.pidDisable(0);
-        }        
-        
-        //Elevator
-        if(driver.getBButton()){
-            Shooter.elevate(elevspeed);
-        }
-        if(driver.getXButton()){
-            Shooter.elevate(0);
-        }
+            DriveTrain.arcadeDrive(driver.getLeftStickYAxis(),driver.getRightStickXAxis());
+        }*/
 
-        //Hood
-        if(driver.getYButton())
-        {
-            Shooter.hoodPosition(Constants.LAYUP_POSITION);
-            Shooter.launch((50.0/15.0)*Constants.LAYUP_SPEED);
+        if(false /*add button control here*/){
+            Shooter.elevate(Constants.ELEVATOR_SPEED);
         }
-        else{
-            Shooter.hoodPosition(hoodPosition);
+        if(false /*add button here*/){
+            Shooter.elevate(Constants.ELEVATOR_REVERSE);
         }
 
 
-
-        
-        
+        Limelight.refresh();
+        SmartDashboard.putNumber("Velocity",velocity);
+        SmartDashboard.putNumber("Angle",angle);
+        SmartDashboard.putNumber("tv",Limelight.getTv());
+        SmartDashboard.putNumber("dist",Utils.dist(Limelight.getTx(),Limelight.getTy()));
     }
+
+    
 
 }

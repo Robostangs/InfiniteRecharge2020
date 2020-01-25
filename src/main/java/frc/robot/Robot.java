@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     SmartDashboard.putNumber("speed" , 0);
     TeleOp.getInstance();
-    Shooter.getInstance();
+    //Shooter.getInstance();
     
   }
 
