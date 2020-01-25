@@ -9,5 +9,13 @@ public class Utils{
         return 0;
     }
 
+    public static double dist(double tx,double ty){
+        return Constants.TARGET_HEIGHT/(Math.tan(degToRad(ty+Constants.LIMELIGHT_ANGLE)));
+    }
 
+    public static double degToRad(double x){
+        return (Math.PI/180.0)*x;
+    }
+
+    
 }
