@@ -2,14 +2,21 @@ package frc.robot;
 
 public class Constants{
 
-    public static final int TALON_RIGHTFRONT = -1;
-    public static final int TALON_LEFTFRONT = -1;
-    public static final int TALON_LEFTBACK = -1;
-    public static final int TALON_RIGHTBACK = -1;
 
     public static final double LIMELIGHT_ANGLE = 43;
     public static final double LIMELIGHT_HEIGHT = 78;
 	public static final double TARGET_HEIGHT = 78;
+
+	public static final double LAYUP_POSITION = -0.75;
+	public static final double LAYUP_SPEED = 3000;
+
+
+	public static final String TALON_LEFTBACK = null;
+	public static final String TALON_LEFTFRONT = null;
+	public static final String TALON_RIGHTBACK = null;
+	public static final String TALON_RIGHTFRONT = null;
+	public static final int LED_CHANNEL = 2;
+
 	
 
 

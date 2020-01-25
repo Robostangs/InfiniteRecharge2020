@@ -54,7 +54,7 @@ public class Shooter {
         launcherLeft.configPeakOutputForward(1, Constants.kTimeoutMs);
         launcherLeft.configPeakOutputReverse(-1, Constants.kTimeoutMs);
 
-        //PID values
+        
         launcherLeft.config_kP(Constants.kPIDLoopIdx, Constants.SHOOTER_kP, Constants.kTimeoutMs);
         launcherLeft.config_kI(Constants.kPIDLoopIdx, Constants.SHOOTER_kI, Constants.kTimeoutMs);
         launcherLeft.config_kD(Constants.kPIDLoopIdx, Constants.SHOOTER_kD, Constants.kTimeoutMs);

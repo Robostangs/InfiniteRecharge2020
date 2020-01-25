@@ -35,7 +35,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     SmartDashboard.putNumber("speed" , 0);
     TeleOp.getInstance();
-    //Shooter.getInstance();
+    Shooter.getInstance();
+    Limelight.getInstance();
+    LEDs.getInstance();
+
     
   }
 
@@ -90,6 +93,7 @@ public class Robot extends TimedRobot {
    */
 @Override
 public void teleopInit(){
+  SmartDashboard.putNumber("LEDS", 0);
   SmartDashboard.putNumber("kP",0);
   SmartDashboard.putNumber("kI",.0007);
   SmartDashboard.putNumber("kD",0);
