@@ -25,7 +25,7 @@ public class Shooter {
     }
 
     public Shooter(){
-        /*launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
+        launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
         launcherRight = new TalonFX(Constants.SHOOTER_TALON_RIGHT);
 
         elevator = new TalonSRX(Constants.ELEVATOR_TALON);
@@ -69,7 +69,7 @@ public class Shooter {
         
         launcherLeft.set(ControlMode.Velocity, speed);
         launcherLeft.setInverted(true);
-        //launcherRight.setInverted(true);*/
+        //launcherRight.setInverted(true);
         
     }
 

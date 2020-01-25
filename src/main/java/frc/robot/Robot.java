@@ -52,6 +52,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("auto kP", 0);
+    SmartDashboard.putNumber("auto kI", 0);
+    SmartDashboard.putNumber("auto kD", 0);
+
+    Drivetrain.setkP2(SmartDashboard.getNumber("auto kP", 0));
+    Drivetrain.setkI2(SmartDashboard.getNumber("auto kI", 0));
+    Drivetrain.setkD2(SmartDashboard.getNumber("auto kD", 0));
   }
 
   /**
@@ -88,6 +95,11 @@ public class Robot extends TimedRobot {
     }
   }
 
+  public void teleopInit(){
+    SmartDashboard.putNumber("kP", 0);
+    SmartDashboard.putNumber("kI", 0);
+    SmartDashboard.putNumber("kD", 0);
+  }
   /**
    * This function is called periodically during operator control.
    */
@@ -105,7 +117,11 @@ public void teleopInit(){
 
   @Override
   public void teleopPeriodic() {
+<<<<<<< HEAD:src/main/java/frc/robot/Robot.java
     TeleOp.run();
+=======
+    Teleop.run();
+>>>>>>> origin/drivetrain-prototype:InfiniteRecharge2020-pb/src/main/java/frc/robot/Robot.java
   }
 
   /**
