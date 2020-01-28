@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -9,10 +7,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Timer;
+import frc.RobotTests.ShooterTester;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFXPIDSetConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 
 
@@ -145,66 +141,7 @@ public class Shooter extends Subsystems{
 
     @Override
     public void checkStart() {
-        Timer t = new Timer();
-        List<Double> left = new ArrayList<Double>();
-        List<Double> right = new ArrayList<Double>();
-        List<Double> elev = new ArrayList<Double>();
-
-        t.start();
-        launchNoPID(0.5, 0);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            left.add(launcherLeft.getMotorOutputPercent()); //possibly change
-            Timer.delay(0.1);
-        }
-        double leftAvg = 0;
-        for(double power: left){
-            leftAvg = leftAvg + power;
-        }
-        if(Math.abs(leftAvg - 0.5) > 0.05){
-            System.out.println("Left side of shooter is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-        
-        Timer.delay(3);
-        t.reset();
-
-        t.start();
-        launchNoPID(0, 0.5);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            right.add(launcherRight.getMotorOutputPercent()); //possibly change
-            Timer.delay(0.1);
-        }
-        double rightAvg = 0;
-        for(double power: right){
-            rightAvg = rightAvg + power;
-        }
-        if(Math.abs(leftAvg - 0.5) > 0.05){
-            System.out.println("Left side of shooter is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-
-        Timer.delay(3);
-        t.reset();
-
-        t.start();
-        Shooter.elevate(0.5);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            elev.add(elevator.getMotorOutputPercent()); 
-            Timer.delay(0.1);
-        }
-        double elevAvg = 0;
-        for(double power: elev){
-            elevAvg = elevAvg + power;
-        }
-        if(Math.abs(elevAvg - 0.5) > 0.05){
-            System.out.println("Elevator talon is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-        t.reset();
-
+        ShooterTester.shooterTest(launcherLeft, launcherRight); //add elevator when talonsrx tester is done
     }
 
     @Override

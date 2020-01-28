@@ -19,10 +19,12 @@ public class ShooterTester {
 
     }
 
-    public void shooterTest(TalonFX launcherLeft, TalonFX launcherRight) {
+    public static void shooterTest(TalonFX launcherLeft, TalonFX launcherRight) {
 
         boolean allMotorsFunctional = true;
         List<TalonFX> motors = new ArrayList<TalonFX>();
+        motors.add(launcherLeft);
+        motors.add(launcherRight);
 
         Shooter.launchNoPID(0.5, 0.5);
 
@@ -37,7 +39,7 @@ public class ShooterTester {
                 allMotorsFunctional = false;
             }
 
-            if(Constants.MOTOR_ACCEPTED_MIN_VELOCITY >= motor.getSelectedSensorVelocity() || motor.getSelectedSensorVelocity() >= Constants.MOTOR_ACCEPTED_MAX_VELOCITY)
+            if(Constants.MOTOR_ACCEPTED_MIN_VELOCITY >= Math.abs(motor.getSelectedSensorVelocity()*(15/50)) || Math.abs(motor.getSelectedSensorVelocity()*(15/50)) >= Constants.MOTOR_ACCEPTED_MAX_VELOCITY)
             {   
                 System.out.println("!!! VELOCITY ERROR !!!");
                 System.out.println("TalonFX: " + motor + " is currently outputting at " + motor.getSelectedSensorVelocity() + " RPM!");

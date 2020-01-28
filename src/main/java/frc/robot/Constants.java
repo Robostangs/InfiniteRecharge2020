@@ -55,8 +55,10 @@ public class Constants
 	public static final double LAUNCHER_ACCEPTED_MAX_CURRENT = 0;
 	public static final double LAUNCHER_ACCEPTED_MIN_CURRENT = 0;
 	
-	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 0;
-	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 0;
+	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 0; //at 0.5 percent power
+	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 0; // at 0.5 percent power
+
+	
 	
 	
     

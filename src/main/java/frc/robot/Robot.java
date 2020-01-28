@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
 
   private Drivetrain dt = new Drivetrain();
   private Shooter sh = new Shooter();
+ 
 
   private List<Subsystems> Subsystems = new ArrayList<Subsystems>();
 
@@ -45,6 +46,16 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    Drivetrain.getInstance();
+    Shooter.getInstance();
+    LEDs.getInstance();
+    //Climber.getInstance();
+    //Intake.getInstance();
+    TeleOp.getInstance();
+    Limelight.getInstance();
+    
+        
+
   }
 
   /**
@@ -103,7 +114,7 @@ public class Robot extends TimedRobot {
  @Override
   public void testInit() {
 
-
+    LEDs.setColor(0.61);
     Subsystems.add(dt);
     Subsystems.add(sh);
 
@@ -123,5 +134,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    LEDs.setColor(0.77);
   }
 }

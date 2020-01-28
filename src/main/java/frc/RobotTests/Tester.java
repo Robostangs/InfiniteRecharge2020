@@ -2,6 +2,7 @@ package frc.RobotTests;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -16,6 +17,8 @@ public class Tester {
         for(Object m: motors){
             if(m.getClass().equals(TalonFX.class)){
                 TalonFX motor = (TalonFX) m;
+                motor.set(ControlMode.PercentOutput, 0.5); //will they follow eachother? 
+                Timer.delay(2); // delay current check until they hit full speed
                 if(Constants.LAUNCHER_ACCEPTED_MIN_CURRENT >= motor.getStatorCurrent() || motor.getStatorCurrent() >= Constants.LAUNCHER_ACCEPTED_MAX_CURRENT)
                  {   
                     System.out.println("!!! CURRENT ERROR !!!");
@@ -25,7 +28,7 @@ public class Tester {
                     allMotorsFunctional = false;
                 }
 
-                if(Constants.MOTOR_ACCEPTED_MIN_VELOCITY >= motor.getSelectedSensorVelocity() || motor.getSelectedSensorVelocity() >= Constants.MOTOR_ACCEPTED_MAX_VELOCITY)
+                if(Constants.LAUNCHER_ACCEPTED_MIN_VELOCITY >= motor.getSelectedSensorVelocity() || motor.getSelectedSensorVelocity() >= Constants.LAUNCHER_ACCEPTED_MAX_VELOCITY)
                 {   
                     System.out.println("!!! VELOCITY ERROR !!!");
                     System.out.println("TalonFX: " + motor.getDeviceID() + " is currently outputting at " + motor.getSelectedSensorVelocity() + " RPM!");
@@ -33,6 +36,8 @@ public class Tester {
                     System.out.println();
                     allMotorsFunctional = false;
                 }
+
+                motor.set(ControlMode.PercentOutput, 0);
             }
             if(m.getClass().equals(TalonSRX.class)){
                 TalonSRX motor = (TalonSRX) m;
@@ -40,6 +45,8 @@ public class Tester {
             }
             if(m.getClass().equals(CANSparkMax.class)){
                 CANSparkMax motor = (CANSparkMax) m;
+                motor.set(0.5);
+                Timer.delay(2);
                 if(Constants.MOTOR_ACCEPTED_MIN_CURRENT >= motor.getOutputCurrent() || motor.getOutputCurrent() >= Constants.MOTOR_ACCEPTED_MAX_CURRENT)
                 {   
                     System.out.println("!!! CURRENT ERROR !!!");
@@ -57,6 +64,7 @@ public class Tester {
                     System.out.println();
                     allMotorsFunctional = false;
                 }
+                motor.set(0);
             }
         }
         if(allMotorsFunctional == true){

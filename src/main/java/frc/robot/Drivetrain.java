@@ -1,9 +1,6 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -13,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.RobotTests.Drivetraintester;
 
@@ -27,9 +23,9 @@ public class Drivetrain extends Subsystems {
     public boolean isPidEnabled = false;
     private PIDController gyropid;
     private Solenoid shifter;
-    private Drivetrain Drivetrain = new Drivetrain();
 
-    public Drivetrain getInstance() {
+
+    public static Drivetrain getInstance() {
         if (instance == null)
             instance = new Drivetrain();
         return instance;
@@ -161,6 +157,7 @@ public class Drivetrain extends Subsystems {
     }
 
     public void targetedDrive(double power) {
+        Drivetrain Drivetrain = new Drivetrain();
         if (isPidEnabled) {
             Drivetrain.arcadeDrive(power, gyropid.calculate(Drivetrain.getAHRS()));
         }
