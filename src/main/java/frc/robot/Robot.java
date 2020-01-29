@@ -13,6 +13,8 @@ import java.util.List;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.RobotTests.IntakeTester;
+import frc.RobotTests.ShooterTester;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,9 +31,10 @@ public class Robot extends TimedRobot {
 
   private Drivetrain dt = new Drivetrain();
   private Shooter sh = new Shooter();
+  private Intake it = new Intake();
  
 
-  private List<Subsystems> Subsystems = new ArrayList<Subsystems>();
+  private List<Subsystems> subsystems = new ArrayList<Subsystems>();
 
 
 
@@ -50,7 +53,7 @@ public class Robot extends TimedRobot {
     Shooter.getInstance();
     LEDs.getInstance();
     //Climber.getInstance();
-    //Intake.getInstance();
+    Intake.getInstance();
     TeleOp.getInstance();
     Limelight.getInstance();
     
@@ -115,12 +118,13 @@ public class Robot extends TimedRobot {
   public void testInit() {
 
     LEDs.setColor(0.61);
-    Subsystems.add(dt);
-    Subsystems.add(sh);
+    subsystems.add(dt);
+    subsystems.add(sh);
+    subsystems.add(it);
 
     System.out.println(" Running Subsystem checks... ");
     System.out.println("----------------------------");
-    for (Subsystems sub : Subsystems)
+    for (Subsystems sub : subsystems)
     {
       System.out.println("\\ Checking status of " + sub + " \\");
       System.out.println();
@@ -134,6 +138,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    LEDs.setColor(0.77);
+    if(ShooterTester.allMotorsFunctional && IntakeTester.allMotorsFunctional){
+      LEDs.setColor(0.77);
+    }
+    else{
+      LEDs.setColor(0.61);
+    }
   }
 }

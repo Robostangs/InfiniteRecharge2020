@@ -53,6 +53,10 @@ public class Drivetrain extends Subsystems {
         encoderRightFront = rightFront.getEncoder();
         encoderLeftFront = leftFront.getEncoder();
 
+        gyropid.setP(Constants.GYROkP);
+        gyropid.setI(Constants.GYROkI);
+        gyropid.setD(Constants.GYROkD);
+
         /******************************************************* */
         // Slot 1
         pidControllerRightFront.setP(Constants.kP, 1);
@@ -65,19 +69,21 @@ public class Drivetrain extends Subsystems {
         pidControllerLeftFront.setD(Constants.kD, 1);
         pidControllerLeftFront.setIZone(Constants.kIz, 1);
 
+
+        
         pidControllerLeftFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 1);
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 1);
 
         // Slot 2
-        pidControllerRightFront.setP(Constants.kP, 2);
-        pidControllerRightFront.setI(Constants.kI, 2);
-        pidControllerRightFront.setD(Constants.kD, 2);
-        pidControllerRightFront.setIZone(Constants.kIz, 2);
+        pidControllerRightFront.setP(Constants.kP2, 2);
+        pidControllerRightFront.setI(Constants.kI2, 2);
+        pidControllerRightFront.setD(Constants.kD2, 2);
+        pidControllerRightFront.setIZone(Constants.kIz2, 2);
 
-        pidControllerLeftFront.setP(Constants.kP, 2);
-        pidControllerLeftFront.setI(Constants.kI, 2);
-        pidControllerLeftFront.setD(Constants.kD, 2);
-        pidControllerLeftFront.setIZone(Constants.kIz, 2);
+        pidControllerLeftFront.setP(Constants.kP2, 2);
+        pidControllerLeftFront.setI(Constants.kI2, 2);
+        pidControllerLeftFront.setD(Constants.kD2, 2);
+        pidControllerLeftFront.setIZone(Constants.kIz2, 2);
 
         pidControllerLeftFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
@@ -106,10 +112,7 @@ public class Drivetrain extends Subsystems {
         rightFront.set(right);
     }
 
-    public void stop() {
-        rightFront.set(0);
-        leftFront.set(0);
-    }
+   
 
     public void arcadeDrive(double fwd, double tur) {
         drive(Utils.ensureRange(fwd + tur, -1d, 1d), Utils.ensureRange(fwd - tur, -1, 1));
@@ -191,6 +194,19 @@ public class Drivetrain extends Subsystems {
         pidControllerRightFront.setP(kP);
     }
 
+    //gyro PID
+    public void setgkP(double gkP) {
+        gyropid.setP(gkP);
+    }
+
+    public void setgkI(double gkI){
+        gyropid.setI(gkI);
+    }
+
+    public void setgkD(double gkD){
+        gyropid.setD(gkD);
+    }
+
     // pid slot 2
     public void setkP2(double kP) {
         pidControllerLeftFront.setP(kP, 2);
@@ -213,11 +229,12 @@ public class Drivetrain extends Subsystems {
     @Override
     public void checkStart() {
         Drivetraintester.dtTester(leftFront, leftMiddle, leftBack, rightFront, rightMiddle, rightBack);
-        
-        
-
     }
     
+    public void stop() {
+        rightFront.set(0);
+        leftFront.set(0);
+    }
     
  
 

@@ -41,22 +41,44 @@ public class Constants
 	public static final double kD = 0;
 	public static final double kIz = 0;
 
+	public static final double kP2 = 0;
+	public static final double kI2 = 0;
+	public static final double kD2 = 0;
+	public static final double kIz2 = 0;
+
+	public static final double GYROkP = 0;
+	public static final double GYROkI = 0;
+	public static final double GYROkD = 0;
+
 	public static final double kMinOutput = 0;
 	public static final double kMaxOutput = 0;
 	public static final double DRIVETRAIN_TEST_RPM = 0;
 
 	//motor checks
-	public static final double MOTOR_ACCEPTED_MAX_CURRENT = 0;
+	public static final double MOTOR_ACCEPTED_MAX_CURRENT = 0; //at 80% power
 	public static final double MOTOR_ACCEPTED_MIN_CURRENT = 0;
 	
 	public static final double MOTOR_ACCEPTED_MAX_VELOCITY = 0;
 	public static final double MOTOR_ACCEPTED_MIN_VELOCITY = 0;
 
-	public static final double LAUNCHER_ACCEPTED_MAX_CURRENT = 0;
-	public static final double LAUNCHER_ACCEPTED_MIN_CURRENT = 0;
+	public static final double LAUNCHER_ACCEPTED_MAX_CURRENT = 0; //at 75% power
+	public static final double LAUNCHER_ACCEPTED_MIN_CURRENT = 0; 
 	
-	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 0; //at 0.5 percent power
-	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 0; // at 0.5 percent power
+	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 0; 
+	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 0; 
+
+	public static final int TALONSRX_ACCEPTED_MIN_VELOCITY = 0; //at 100% power
+	public static final int TALONSRX_ACCEPTED_MIN_CURRENT = 0;
+
+	public static final double TALONSRX_ACCEPTED_MAX_CURRENT = 0;
+	public static final int TALONSRX_ACCEPTED_MAX_VELOCITY = 0;
+
+
+	//Intake
+	public static final int INTAKE_BELT = 0;
+	public static final int INTAKE_INGESTORBAR = 0;
+	public static final int INTAKE_INGESTOR = 0;
+
 
 	
 	
