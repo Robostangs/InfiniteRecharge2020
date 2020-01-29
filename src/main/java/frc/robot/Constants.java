@@ -26,6 +26,9 @@ public class Constants{
 
 	public static final double FEET_ROTATION_CONVERSION_RATIO = 1.57; //1 foot = 1.57 rotations
 	public static final int LED_CHANNEL = 0;
+	public static final double GYROkP = 0;
+	public static final double GYROkI = 0;
+	public static final double GYROkD = 0;
     
 
 

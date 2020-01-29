@@ -10,6 +10,10 @@ public class Teleop{
     private static double kP;
     private static double kI;
     private static double kD;
+    
+    private static double gkP;
+    private static double gkI;
+    private static double gkD;
 
 
     
@@ -27,6 +31,10 @@ public class Teleop{
         kP = 0;
         kI = 0;
         kD = 0;
+
+        gkP = 0;
+        gkI = 0;
+        gkD = 0;
         
 
         
@@ -43,6 +51,13 @@ public class Teleop{
         Drivetrain.setkD(SmartDashboard.getNumber("kP", kP));
         Drivetrain.setkI(SmartDashboard.getNumber("kI", kI));
         Drivetrain.setkP(SmartDashboard.getNumber("kD", kD));
+        gkP = SmartDashboard.getNumber("Gyro kD", gkP);
+        gkI = SmartDashboard.getNumber("Gyro kI", gkI);
+        gkD = SmartDashboard.getNumber("Gyro kD", gkD);
+        Drivetrain.setgkP(gkP);
+        Drivetrain.setgkI(gkI);
+        Drivetrain.setgkD(gkD);
+
    
 
         if(driver.getLeftBumper())

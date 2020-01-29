@@ -56,6 +56,10 @@ public class Drivetrain
         encoderRightFront = rightFront.getEncoder();
         encoderLeftFront = leftFront.getEncoder();
         
+        gyropid.setP(Constants.GYROkP);
+        gyropid.setI(Constants.GYROkI);
+        gyropid.setD(Constants.GYROkD);
+
         /******************************************************* */
         //Slot 1
         pidControllerRightFront.setP(Constants.kP, 1);
@@ -70,6 +74,7 @@ public class Drivetrain
 
         pidControllerLeftFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 1);
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 1);
+
 
         //Slot 2
         pidControllerRightFront.setP(Constants.kP, 2);
@@ -141,6 +146,19 @@ public class Drivetrain
 
     public static double getVelocityLeft(){
         return encoderLeftFront.getVelocity();
+    }
+
+    //gyro pid
+    public static void setgkP(double gkP) {
+        gyropid.setP(gkP);
+    }
+
+    public static void setgkI(double gkI){
+        gyropid.setI(gkI);
+    }
+
+    public static void setgkD(double gkD){
+        gyropid.setD(gkD);
     }
 
     //PID / auto
