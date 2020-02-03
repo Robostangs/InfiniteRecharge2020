@@ -12,21 +12,17 @@ import frc.robot.Shooter;
 
 public class ShooterTester {
 
-    public static boolean allMotorsFunctional = true;
+
 
 
     public ShooterTester(){
 
-       
-
     }
 
-    public static void shooterTest(TalonFX launcherLeft, TalonFX launcherRight) {
+    public void shooterTest(TalonFX launcherLeft, TalonFX launcherRight) {
 
-        
-        List<TalonFX> motors = new ArrayList<TalonFX>();
-        motors.add(launcherLeft);
-        motors.add(launcherRight);
+        boolean allMotorsFunctional = true;
+        ArrayList motors = new ArrayList();
 
         Shooter.launchNoPID(0.5, 0.5);
 
@@ -41,10 +37,10 @@ public class ShooterTester {
                 allMotorsFunctional = false;
             }
 
-            if(Constants.MOTOR_ACCEPTED_MIN_VELOCITY >= Math.abs(motor.getSelectedSensorVelocity()*(15/50)) || Math.abs(motor.getSelectedSensorVelocity()*(15/50)) >= Constants.MOTOR_ACCEPTED_MAX_VELOCITY)
+            if(Constants.MOTOR_ACCEPTED_MIN_VELOCITY >= motor.getSelectedSensorVelocity() || motor.getSelectedSensorVelocity() >= Constants.MOTOR_ACCEPTED_MAX_VELOCITY)
             {   
                 System.out.println("!!! VELOCITY ERROR !!!");
-                System.out.println("TalonFX: " + motor + " is currently outputting at " + motor.getSelectedSensorVelocity()*(15/50) + " RPM!");
+                System.out.println("TalonFX: " + motor + " is currently outputting at " + motor.getSelectedSensorVelocity() + " RPM!");
                 System.out.println("...Its expected output is around " + (Constants.LAUNCHER_ACCEPTED_MIN_VELOCITY + Constants.LAUNCHER_ACCEPTED_MAX_VELOCITY)/2 + " RPM!");
                 System.out.println();
                 allMotorsFunctional = false;
@@ -62,10 +58,6 @@ public class ShooterTester {
         
 
 
-    }
-
-    public static boolean isFunctional(){
-        return allMotorsFunctional;
     }
 
 
