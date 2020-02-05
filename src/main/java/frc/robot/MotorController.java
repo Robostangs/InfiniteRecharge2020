@@ -1,6 +1,6 @@
 /**
  * 
- * @revision-date Wed Jan 31 2020
+ * @revision Tue Feb 2 2020
  * 
  * Standardized MotorController class that encapsulates different motor types.
  * Currently implemented types:
@@ -17,6 +17,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class MotorController {
 
     private MotorController master;
@@ -26,6 +28,7 @@ public class MotorController {
     private CANSparkMax neo;
 
     private int type;
+    private String name;
 
     /**
      * MotorController
@@ -34,6 +37,7 @@ public class MotorController {
      */
     public MotorController(TalonSRX talon){
         this.talon = talon;
+        this.name = "talon";
         type = 0; //TODO Move to Constants?
     }
     
@@ -44,6 +48,7 @@ public class MotorController {
      */
     public MotorController(TalonFX falcon){
         this.falcon = falcon;
+        this.name = "falcon";
         type = 1; //TODO Move to Constants?
     }
 
@@ -54,6 +59,43 @@ public class MotorController {
      */
     public MotorController(CANSparkMax neo){
         this.neo = neo;
+        this.name = "neo";
+        type = 2; //TODO Move to Constants?
+    }
+
+    /**
+     * MotorController
+     * 
+     * @param talon TalonSRX
+     * @param String name
+     */
+    public MotorController(TalonSRX talon, String name){
+        this.talon = talon;
+        this.name = name;
+        type = 0; //TODO Move to Constants?
+    }
+    
+    /**
+     * MotorController
+     * 
+     * @param falcon TalonFX
+     * @param String name
+     */
+    public MotorController(TalonFX falcon, String name){
+        this.falcon = falcon;
+        this.name = name;
+        type = 1; //TODO Move to Constants?
+    }
+
+    /**
+     * MotorController
+     * 
+     * @param neo CANSparkMax
+     * @param String name
+     */
+    public MotorController(CANSparkMax neo, String name){
+        this.neo = neo;
+        this.name = name;
         type = 2; //TODO Move to Constants?
     }
 
@@ -333,5 +375,24 @@ public class MotorController {
      */
     public MotorController getMaster(){
         return master;
+    }
+
+    /**
+     * getName
+     * 
+     * @return String
+     */
+    public String getName(){
+        return name;
+    }
+
+    public void pushToDashboard(){
+        SmartDashboard.putNumber(name + " Voltage: ",this.getBusVoltage());
+        SmartDashboard.putNumber(name + "Temperature: ",this.getTemperature());
+        SmartDashboard.putNumber(name + "Motor Output: ",this.getMotorOutputPercent());
+        SmartDashboard.putNumber(name + "Motor Velocity: ",this.getEncoderVelocity());
+        SmartDashboard.putNumber(name + "Motor Position: ",this.getEncoderPosition());
+        SmartDashboard.putNumber(name + "Current: ",this.getCurrent());
+        SmartDashboard.putString(name + "Master: ",this.getMaster().getName());
     }
 }
