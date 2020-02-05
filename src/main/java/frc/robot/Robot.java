@@ -49,13 +49,13 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    Drivetrain.getInstance();
-    Shooter.getInstance();
-    LEDs.getInstance();
+    subsystems.add(Drivetrain.getInstance());
+    subsystems.add(Shooter.getInstance());
+    subsystems.add(LEDs.getInstance());
     //Climber.getInstance();
-    Intake.getInstance();
-    TeleOp.getInstance();
-    Limelight.getInstance();
+    subsystems.add(Intake.getInstance());
+    subsystems.add(TeleOp.getInstance());
+    subsystems.add(Limelight.getInstance());
     
         
 
