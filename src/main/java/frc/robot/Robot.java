@@ -7,9 +7,14 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.RobotTests.IntakeTester;
+import frc.RobotTests.ShooterTester;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +28,17 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  
+  Drivetrain dt = Drivetrain.getInstance();
+  Shooter sh = Shooter.getInstance();
+  Intake it = Intake.getInstance();
+ 
+
+  private List<Subsystems> subsystems = new ArrayList<Subsystems>();
+
+
+
+  //add subsystems to list
 
   /**
    * This function is run when the robot is first started up and should be
@@ -33,6 +49,16 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    Drivetrain.getInstance();
+    Shooter.getInstance();
+    LEDs.getInstance();
+    //Climber.getInstance();
+    Intake.getInstance();
+    TeleOp.getInstance();
+    Limelight.getInstance();
+    
+        
+
   }
 
   /**
@@ -88,10 +114,35 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
   }
 
+ @Override
+  public void testInit() {
+
+    LEDs.setColor(0.61);
+    subsystems.add(dt);
+    subsystems.add(sh);
+    subsystems.add(it);
+
+    System.out.println(" Running Subsystem checks... ");
+    System.out.println("----------------------------");
+    for (Subsystems sub : subsystems)
+    {
+      System.out.println("\\ Checking status of " + sub + " \\");
+      System.out.println();
+      sub.checkStart();
+      System.out.println("------------------------------");
+    }
+    
+  }
   /**
    * This function is called periodically during test mode.
    */
   @Override
   public void testPeriodic() {
+    if(ShooterTester.allMotorsFunctional && IntakeTester.allMotorsFunctional){
+      LEDs.setColor(0.77);
+    }
+    else{
+      LEDs.setColor(0.61);
+    }
   }
 }

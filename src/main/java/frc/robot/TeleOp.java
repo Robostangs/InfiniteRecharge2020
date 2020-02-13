@@ -3,121 +3,209 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TeleOp{
-    public static XBoxController driver, manip;
+
+    static Drivetrain dt = Drivetrain.getInstance();
+    static Intake it = Intake.getInstance();
+
+    private static XBoxController driver;
+    private static XBoxController manip;
     public static TeleOp instance;
 
-    //for tuning
-    public static boolean[] press = new boolean[8];
+    private static double speed;
+    private static double elevspeed;
+    private static double hoodPosition;
 
-    public static int velocity;
-    public static double angle;
+    //shooter
+    private static double kP;
+    private static double kI;
+    private static double kD;
+    private static double kF;
+
+    //drivetrain
+    private static double dkP;
+    private static double dkI;
+    private static double dkD;
+    
+    //gyro
+    private static double gkP;
+    private static double gkI;
+    private static double gkD;
 
 
-    public static TeleOp getInstance() {
-		if (instance == null)
-			instance = new TeleOp();
-		return instance;
+
+
+    //led checks
+    public static boolean elevLEDS;
+    public static boolean shooterLEDS;
+    public static boolean shootingLEDS;
+
+    
+
+    public static TeleOp getInstance(){
+        if(instance == null)
+            instance = new TeleOp();
+        return instance;
     }
 
     private TeleOp(){
-		driver = new XBoxController(Constants.XBOX_DRIVER);
+        
+        driver = new XBoxController(Constants.XBOX_DRIVER);
         manip = new XBoxController(Constants.XBOX_MANIP);
-        velocity = 0;
-        angle = 0;
-    }
+
+        //shooter defaults
+        speed = 0;
+        elevspeed = 0.3;
+        kP = 0.2;
+        kI = 0.000001;
+        kD = 5.1;
+        kF = 0.048;
+
+        elevLEDS = false;
+        shooterLEDS = false;
+        shootingLEDS = false;
+        
+        //driver defaults
+        dkP = 0;
+        dkI = 0;
+        dkD = 0;
+        
+        gkP = 0;
+        gkI = 0;
+        gkD = 0;
     
+        
+        
+
+    }
+
     public static void run(){
 
-        if(DriveTrain.ispidEnabled()){
-            Limelight.lineUp();
-            DriveTrain.targetedDrive(driver.getLeftStickYAxis());
+        
+        smartDashboard();
 
-        }
-        else{
-            DriveTrain.arcadeDrive(driver.getLeftStickYAxis(),driver.getRightStickXAxis());
-        }
+        /* DRIVER CONTROLS */
+
+            if(driver.getLeftBumper())
+            {
+                if(Limelight.getTv() == 1){
+                    LEDs.setColor(-0.31); //red light chase
+                    dt.targetedDrive(0); // keep 0
+                    dt.setAngle(dt.getAHRS() + Limelight.getTx());
+                }
+            }
+            else{
+                dt.arcadeDrive(Utils.expodeadZone(driver.getLeftStickYAxis()), Utils.expodeadZone(driver.getRightStickXAxis()));
+            }
+
+            if(driver.getRightBumper()){
+                dt.highGear();
+            }
+            else{
+                dt.lowGear();
+            }
+        
 
 
 
+        /* MANIP CONTROLS */
+        Limelight.refresh();
 
-        if(manip.getYButton()){
-            if(!press[0]){
-                velocity+=1;
-                press[0] = true;
+        Shooter.setkD(kD);
+        Shooter.setkI(kI);
+        Shooter.setkP(kP);
+        Shooter.setkF(kF);
+
+        if (shooterLEDS == true) {
+            LEDs.setColor(0.65);
+        } else if (shootingLEDS == true) {
+            LEDs.setColor(0.63);
+        } else if (elevLEDS == true) {
+            LEDs.setColor(-0.81);
+        } else {
+            LEDs.setColor(-0.99);
+        }
+
+        // Shooter
+        if (manip.getAButton()) {
+            Shooter.launch((50.0 / 15.0) * speed);
+            if (Shooter.getVelo() < speed - 10) {
+                shootingLEDS = true;
+                shooterLEDS = false;
+            } else {
+                shootingLEDS = false;
+                shooterLEDS = true;
             }
+        } else {
+            Shooter.pidDisable(0);
+            shooterLEDS = false;
         }
-        else{
-            press[0] = false;
+
+        // Hood
+        if (manip.getYButton()) {
+            Shooter.hoodPosition(Constants.LAYUP_POSITION);
+            Shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
+
+        } else {
+            Shooter.hoodPosition(hoodPosition); //eventually implement automatic hood positioning with driver controls
         }
-        if(manip.getAButton()){
-            if(!press[1]){
-                velocity-=1;
-                press[1] = true;
-            }
-        }
-        else{
-            press[1] = false;
-        }
-        if(manip.getBButton()){
-            if(!press[2]){
-                velocity+=10;
-                press[2] = true;
-            }
-        }
-        else{
-            press[2] = false;
-        }
-        if(manip.getXButton()){
-            if(!press[3]){
-                velocity-=10;
-                press[3] = true;
-            }
-        }
-        else{
-            press[3] = false;
-        }
-        if(manip.getRightBumper()){
-            if(!press[4]){
-                angle+=.5;
-                press[4] = true;
-            }
-        }
-        else{
-            press[4] = false;
-        }
-        if(manip.getRightTriggerButton()){
-            if(!press[5]){
-                angle+=5;
-                press[5] = true;
-            }
-        }
-        else{
-            press[5] = false;
-        }
+
+        //intake
         if(manip.getLeftBumper()){
-            if(!press[6]){
-                angle-=.5;
-                press[6] = true;
-            }
-        }
+            it.barDown(true);
+        } 
         else{
-            press[6] = false;
-        }
-        if(manip.getLeftTriggerButton()){
-            if(!press[7]){
-                angle-=5;
-                press[7] = true;
-            }
-        }
-        else{
-            press[7] = false;
+            it.barDown(false);
         }
 
-        SmartDashboard.putNumber("Velocity",velocity);
-        SmartDashboard.putNumber("Angle",angle);
+        it.beltMove(manip.getLeftStickYAxis());
+        if(it.isBarDown()){
+            it.ingest(manip.getLeftStickYAxis());
+        }
+
 
     }
 
-    
+
+
+
+    public static void smartDashboard() {
+        dkP = SmartDashboard.getNumber("Driver kP", dkP);
+        dkI = SmartDashboard.getNumber("Driver kI", dkI);
+        dkD = SmartDashboard.getNumber("Driver kD", dkD);
+
+        gkP = SmartDashboard.getNumber("Gyro kD", gkP);
+        gkI = SmartDashboard.getNumber("Gyro kI", gkI);
+        gkD = SmartDashboard.getNumber("Gyro kD", gkD);
+
+        //drivetrain set values
+        dt.setkP(dkP);
+        dt.setkI(dkI);
+        dt.setkD(dkD);
+
+        dt.setgkP(gkP);
+        dt.setgkI(gkI);
+        dt.setgkD(gkD);
+        
+
+
+        speed = SmartDashboard.getNumber("Jeff", speed);
+        elevspeed = SmartDashboard.getNumber("elevspeed", elevspeed);
+        hoodPosition = SmartDashboard.getNumber("Hood Position", 0);
+
+        SmartDashboard.putNumber("Tv", Limelight.getTv());
+        double distance = Utils.dist(Limelight.getTx(), Limelight.getTy());
+
+
+        SmartDashboard.putNumber("Shooter kP", kP);
+        SmartDashboard.putNumber("Shooter kI", kI);
+        SmartDashboard.putNumber("Shooter kD", kD);
+        SmartDashboard.putNumber("Shooter kF", kF);
+        SmartDashboard.putNumber("distance", distance);
+        SmartDashboard.putNumber("LEDS", LEDs.getColor());
+
+        SmartDashboard.putNumber("Shooter temperature temp", Shooter.getTemp());
+        SmartDashboard.putNumber("% Output", Shooter.getPercentOutput());
+        SmartDashboard.putNumber("Velocity", (15.0 / 50.0) * Shooter.getVelo());
+    }
 
 }
