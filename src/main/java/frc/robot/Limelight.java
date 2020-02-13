@@ -47,22 +47,8 @@ public class Limelight {
         return ta;
     }
 
-    public static void lineUp(){
-        if(tv==1){
-            double distance = Utils.dist(tx,ty);
-            Shooter.setFarAngle(Utils.distToAngle(distance)); //change
-            Shooter.shootAtVelocity(Utils.distToVelocity(distance));
-            //need to add gyro lineup
-            
 
 
-
-        }
-        else{
-
-        }
-
-    }
 
     
 }

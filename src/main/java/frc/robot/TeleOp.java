@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TeleOp{
 
-    static Drivetrain dt = Drivetrain.getInstance();
-    static Intake it = Intake.getInstance();
+    public static Drivetrain dt = Drivetrain.getInstance();
+    public static Shooter shooter = Shooter.getInstance();
+    public static Intake intake = Intake.getInstance();
 
     private static XBoxController driver;
     private static XBoxController manip;
@@ -13,23 +14,16 @@ public class TeleOp{
 
     private static double speed;
     private static double elevspeed;
-    private static double hoodPosition;
 
-    //shooter
-    private static double kP;
-    private static double kI;
-    private static double kD;
-    private static double kF;
-
-    //drivetrain
     private static double dkP;
     private static double dkI;
     private static double dkD;
     
-    //gyro
     private static double gkP;
     private static double gkI;
     private static double gkD;
+
+    private static double hoodPosition;
 
 
 
@@ -55,10 +49,7 @@ public class TeleOp{
         //shooter defaults
         speed = 0;
         elevspeed = 0.3;
-        kP = 0.2;
-        kI = 0.000001;
-        kD = 5.1;
-        kF = 0.048;
+
 
         elevLEDS = false;
         shooterLEDS = false;
@@ -80,8 +71,8 @@ public class TeleOp{
 
     public static void run(){
 
-        
         smartDashboard();
+        
 
         /* DRIVER CONTROLS */
 
@@ -89,12 +80,23 @@ public class TeleOp{
             {
                 if(Limelight.getTv() == 1){
                     LEDs.setColor(-0.31); //red light chase
-                    dt.targetedDrive(0); // keep 0
+                    //set speed limit on driver during lineup?
                     dt.setAngle(dt.getAHRS() + Limelight.getTx());
+
+                    dt.targetedDrive(Utils.expodeadZone(driver.getRightStickYAxis() * 0.75)); // allows driver to move back and forth
+                   
+
+                
+                    //shooter.hoodPosition(Utils.distToActuator(Utils.dist(Limelight.getTx(), Limelight.getTy()), Constants.ACTUATOR_SLOPE, Constants.LAYUP_POSITION));
+
+
+                }
+                else{
+                    //shooter.hoodPosition(Constants.LAYUP_POSITION);
                 }
             }
             else{
-                dt.arcadeDrive(Utils.expodeadZone(driver.getLeftStickYAxis()), Utils.expodeadZone(driver.getRightStickXAxis()));
+                dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
             }
 
             if(driver.getRightBumper()){
@@ -107,14 +109,20 @@ public class TeleOp{
 
 
 
-        /* MANIP CONTROLS */
+
+        
+    /* MANIP CONTROLS */
+
         Limelight.refresh();
 
-        Shooter.setkD(kD);
-        Shooter.setkI(kI);
-        Shooter.setkP(kP);
-        Shooter.setkF(kF);
+        //SHOOTER PID VALUES   
+        shooter.setkD(SmartDashboard.getNumber("Shooter kD", 0));
+        shooter.setkI(SmartDashboard.getNumber("Shooter kI", 0));
+        shooter.setkP(SmartDashboard.getNumber("Shooter kP", 0));
+        shooter.setkF(SmartDashboard.getNumber("Shooter kF", 0));
 
+
+        //LEDS
         if (shooterLEDS == true) {
             LEDs.setColor(0.65);
         } else if (shootingLEDS == true) {
@@ -127,42 +135,61 @@ public class TeleOp{
 
         // Shooter
         if (manip.getAButton()) {
-            Shooter.launch((50.0 / 15.0) * speed);
-            if (Shooter.getVelo() < speed - 10) {
+
+            shooter.launch((50.0/15.0)*speed);
+
+            //LEDS to indicate if up to speed
+            if(shooter.getVelo() < speed - 5){
                 shootingLEDS = true;
-                shooterLEDS = false;
-            } else {
+                shooterLEDS = false;   
+            }
+            else{
                 shootingLEDS = false;
                 shooterLEDS = true;
             }
-        } else {
-            Shooter.pidDisable(0);
-            shooterLEDS = false;
+
+
+            /* AFTER TESTING ////
+            if(Limelight.getTv() == 1) {
+                shooter.launch((50.0/15.0)*Utils.distToActuator(Utils.dist(Limelight.getTx(), Limelight.getTy()), Constants.POWER_SLOPE, Constants.POWER_LAYUP));
+
+            }
+            /* */
+
+        }
+        else{
+            //when intaking, shooter does not launch balls
+            shooter.launch(-manip.getLeftStickYAxis()*0.25);
+        }
+        
+
+  
+        
+        //intake bar
+        if(manip.getLeftBumper()) {
+            intake.barDown(true);
+            intake.ingest(manip.getRightStickYAxis()); 
+        }
+        else{
+            intake.barDown(false);
         }
 
-        // Hood
+
+
+        // Layup
         if (manip.getYButton()) {
-            Shooter.hoodPosition(Constants.LAYUP_POSITION);
-            Shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
+            shooter.hoodPosition(Constants.LAYUP_POSITION);
+            intake.beltMove(0.8);
+            shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
 
-        } else {
-            Shooter.hoodPosition(hoodPosition); //eventually implement automatic hood positioning with driver controls
-        }
-
-        //intake
-        if(manip.getLeftBumper()){
-            it.barDown(true);
         } 
         else{
-            it.barDown(false);
+            //elevator
+            shooter.hoodPosition(hoodPosition); //for testing
+            intake.beltMove(manip.getLeftStickYAxis());
+
         }
-
-        it.beltMove(manip.getLeftStickYAxis());
-        if(it.isBarDown()){
-            it.ingest(manip.getLeftStickYAxis());
-        }
-
-
+        
     }
 
 
@@ -196,16 +223,10 @@ public class TeleOp{
         double distance = Utils.dist(Limelight.getTx(), Limelight.getTy());
 
 
-        SmartDashboard.putNumber("Shooter kP", kP);
-        SmartDashboard.putNumber("Shooter kI", kI);
-        SmartDashboard.putNumber("Shooter kD", kD);
-        SmartDashboard.putNumber("Shooter kF", kF);
+        //Shooter values
         SmartDashboard.putNumber("distance", distance);
-        SmartDashboard.putNumber("LEDS", LEDs.getColor());
-
-        SmartDashboard.putNumber("Shooter temperature temp", Shooter.getTemp());
-        SmartDashboard.putNumber("% Output", Shooter.getPercentOutput());
-        SmartDashboard.putNumber("Velocity", (15.0 / 50.0) * Shooter.getVelo());
+        SmartDashboard.putNumber("% Output", shooter.getPercentOutput());
+        SmartDashboard.putNumber("Velocity", (15.0 / 50.0) * shooter.getVelo());
     }
 
 }

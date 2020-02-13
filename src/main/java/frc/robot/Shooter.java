@@ -17,9 +17,9 @@ import frc.RobotTests.ShooterTester;
 public class Shooter extends Subsystems{
 
     public static Shooter instance;
-    private static TalonFX launcherLeft, launcherRight;
-    private static TalonSRX elevator;
-    private static Servo servoLeft, servoRight;
+    private  TalonFX launcherLeft, launcherRight;
+    private  TalonSRX elevator;
+    private  Servo servoLeft, servoRight;
  
     
     public static Shooter getInstance(){
@@ -28,7 +28,7 @@ public class Shooter extends Subsystems{
         return instance;
     }
 
-    private Shooter(){
+    public Shooter() {
         launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
         launcherRight = new TalonFX(Constants.SHOOTER_TALON_RIGHT);
 
@@ -67,81 +67,81 @@ public class Shooter extends Subsystems{
         
     }
 
-    public static void launch(double speed)
+    public  void launch(double speed)
     {
         launcherLeft.set(ControlMode.Velocity, speed);
         launcherLeft.setInverted(true);  
     }
 
-    public static void launchNoPID(double leftSpeed, double rightSpeed) // percent output
+    public  void launchNoPID(double leftSpeed, double rightSpeed) // percent output
     {
         launcherLeft.set(ControlMode.PercentOutput, leftSpeed);
         launcherRight.set(ControlMode.PercentOutput, rightSpeed);
     }
 
-    public static void pidDisable(double speed)
+    public  void pidDisable(double speed)
     {
         launcherLeft.set(ControlMode.PercentOutput, speed);
     }
 
-    public static double getPercentOutput()
+    public  double getPercentOutput()
     {
         return launcherLeft.getMotorOutputPercent();
     }
 
-   public static void elevate(double power)
+   public  void elevate(double power)
     {
         elevator.set(ControlMode.PercentOutput, power);
     }
 
-    public static double elevatePercent()
+    public  double elevatePercent()
     {
         return elevator.getMotorOutputPercent();
     }
 
     //value between 0 and 1
-    public static void hoodPosition(double position)
+    public  void hoodPosition(double position)
     {
         servoLeft.setSpeed(position);
         servoRight.setSpeed(position);
     }
 
 
-    public static void setkP(double x){
+    public  void setkP(double x){
         launcherLeft.config_kP(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkI(double x){
+    public  void setkI(double x){
         launcherLeft.config_kI(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkD(double x){
+    public  void setkD(double x){
         launcherLeft.config_kD(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkF(double x){
+    public  void setkF(double x){
         launcherLeft.config_kF(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static double getVelo(){
+    public  double getVelo(){
         return launcherLeft.getSelectedSensorVelocity();
     }
 
-    public static double getVeloRight(){
+    public  double getVeloRight(){
         return launcherLeft.getSelectedSensorVelocity();
     }
 
-    public static double getTemp(){
+    public  double getTemp(){
         return launcherLeft.getTemperature();
     }
 
-    public static double getRighTemp(){
+    public double getRighTemp(){
         return launcherRight.getTemperature();
     }
 
     @Override
     public void checkStart() {
-        ShooterTester.shooterTest(launcherLeft, launcherRight); //add elevator when talonsrx tester is done
+        ShooterTester.shooterTest(launcherLeft, launcherRight); 
     }
 
     @Override

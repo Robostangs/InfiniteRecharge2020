@@ -3,6 +3,12 @@ package frc.robot;
 public class Utils{
 
 
+    //also works for power
+    public static double distToActuator(double distance, double slope, double min){
+
+        return slope*distance - min;
+    }
+
 
     public static double dist(double tx,double ty){
         return Constants.TARGET_HEIGHT/(Math.tan(degToRad(ty+Constants.LIMELIGHT_ANGLE)));
@@ -25,10 +31,10 @@ public class Utils{
     }
 
     public static double expodeadZone(double input){
-        if(-0.05>input){
+        if(-0.1>input){
             return -1.108*(input+.05)*(input+.05);
         }
-        else if(0.05<input){
+        else if(0.1<input){
             return 1.108*(input+.05)*(input+.05);
         }
         else{
