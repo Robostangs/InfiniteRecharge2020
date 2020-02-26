@@ -14,13 +14,8 @@ public class ShooterTester {
     private static boolean allMotorsFunctional = true;
     public static ArrayList<TalonFX> motors = new ArrayList<TalonFX>();
 
-    public ShooterTester(){
-
-    }
-
     public static void shooterTest(TalonFX launcherLeft, TalonFX launcherRight) {
 
-        int motornum = 0;
 
         System.out.println();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -31,11 +26,11 @@ public class ShooterTester {
         motors.add(launcherRight);
 
         shooter.launchNoPID(1, 1);
-
+        Timer.delay(4);
 
         for(TalonFX motor : motors){
 
-            System.out.println("Testing " + motors.get(motornum) + "...");
+            System.out.println("Testing " + motors.indexOf(motor) + "...");
             
             if(Constants.LAUNCHER_ACCEPTED_MIN_CURRENT >= motor.getStatorCurrent() || motor.getStatorCurrent() >= Constants.LAUNCHER_ACCEPTED_MAX_CURRENT)
             {   
@@ -55,13 +50,12 @@ public class ShooterTester {
                 allMotorsFunctional = false;
             }
 
-            motornum = motornum + 1;
-
         }
 
         Timer.delay(4);
 
         shooter.launchNoPID(0, 0);
+
         if(allMotorsFunctional == true){
             System.out.println("All motors functional");
         }
@@ -73,7 +67,7 @@ public class ShooterTester {
 
 
     public static boolean allMotorsFunctional(){
-        return allMotorsFunctional();
+        return allMotorsFunctional;
     }
 
 

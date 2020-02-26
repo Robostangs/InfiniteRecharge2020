@@ -8,7 +8,7 @@ import frc.robot.Shooter;
 public class lookForTarget extends AutoCommandBase{
     private double power;
     private Boolean isLeft;
-    private double shootPower;
+    private double shootRPM;
     private double actPosition;
     private Drivetrain drivetrain = Drivetrain.getInstance();
     private Shooter shooter = Shooter.getInstance();
@@ -22,7 +22,7 @@ public class lookForTarget extends AutoCommandBase{
         this.power = power;
 
         this.isLeft = isLeft;
-        this.shootPower = shootSpeed;
+        this.shootRPM = shootSpeed;
 		this.actPosition = act;
 
 
@@ -35,7 +35,7 @@ public class lookForTarget extends AutoCommandBase{
 
     @Override
     protected void run(){
-        shooter.launch(shootPower*(15/50));
+        shooter.launchRPM(shootRPM);
         Limelight.refresh();
         if(Limelight.getTv() == 1){
             Limelight.ledsOn();

@@ -12,10 +12,10 @@ public class Intake extends Subsystems {
 
     public static Intake instance;
     public AnalogInput lowSensor; //ultrasonic
-    public DigitalInput highSensor; //color
-    public TalonSRX belt;
-    public Solenoid ingestorBar;
-    public TalonSRX ingestor;
+    public DigitalInput lowBeltSensor; //color
+    public TalonSRX beltTalon;
+    public Solenoid ingestorBarSolenoid;
+    public TalonSRX ingestorTalon;
 
     public static Intake getInstance() {
         if (instance == null)
@@ -24,62 +24,62 @@ public class Intake extends Subsystems {
     }
 
     private Intake() {
-        belt = new TalonSRX(Constants.INTAKE_BELT);
-        ingestorBar = new Solenoid(Constants.INTAKE_INGESTORBAR);
-        ingestor = new TalonSRX(Constants.INTAKE_INGESTOR);
-        lowSensor = new AnalogInput(Constants.ULTRASONIC_LOW);
-        highSensor = new DigitalInput(Constants.COLOR_HIGH);
-        belt.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        beltTalon = new TalonSRX(Constants.INTAKE_BELT_TALON);
+        ingestorBarSolenoid = new Solenoid(Constants.INTAKE_INGESTOR_BAR_SOLENOID);
+        ingestorTalon = new TalonSRX(Constants.INTAKE_INGESTOR_TALON);
+        //lowSensor = new AnalogInput(Constants.ULTRASONIC_LOW);
+        lowBeltSensor = new DigitalInput(Constants.COLOR_BELT_LOW);
+        beltTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         
     }
 
-    public double getLowSensor(){
-        return lowSensor.getVoltage();
-    }
+    // public double getLowSensor(){
+    //     return lowSensor.getVoltage();
+    // }
 
-    public boolean getHighSensor() {
-		return highSensor.get();
+    public boolean getLowBeltSensor() {
+		return lowBeltSensor.get();
 	}
 
     public void ingest(double power) {
-        ingestor.set(ControlMode.PercentOutput, power);
+        ingestorTalon.set(ControlMode.PercentOutput, power);
     }
 
     public void beltMove(double power) {
-        belt.set(ControlMode.PercentOutput, power);
+        beltTalon.set(ControlMode.PercentOutput, power);
     }
 
     public double getBeltEncoder() {
-        return belt.getSelectedSensorPosition();
+        return beltTalon.getSelectedSensorPosition();
     }
 
     public void resetBeltEncoder() {
-        belt.setSelectedSensorPosition(0);
+        beltTalon.setSelectedSensorPosition(0);
     }
 
     public void beltMovePosition(double position){
-        belt.set(ControlMode.Position, position);
+        beltTalon.set(ControlMode.Position, position);
     }
 
     public void barDown(boolean isDown) {
-        ingestorBar.set(isDown);
+        ingestorBarSolenoid.set(isDown);
     }
 
     public boolean isBarDown() {
-        return ingestorBar.get();
+        return ingestorBarSolenoid.get();
     }
 
     @Override
     public void checkStart() {
-        IntakeTester.itTester(belt, ingestor);
+        IntakeTester.itTester(beltTalon, ingestorTalon);
     }
 
     @Override
     public void stop() {
 
-        ingestorBar.set(false); // possibly change
-        ingestor.set(ControlMode.PercentOutput, 0);
-        belt.set(ControlMode.PercentOutput, 0);
+        ingestorBarSolenoid.set(false); // possibly change
+        ingestorTalon.set(ControlMode.PercentOutput, 0);
+        beltTalon.set(ControlMode.PercentOutput, 0);
 
     }
 

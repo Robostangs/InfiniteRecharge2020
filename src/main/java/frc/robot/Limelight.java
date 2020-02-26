@@ -21,7 +21,7 @@ public class Limelight {
         return instance;
     }
 
-    public Limelight(){
+    private Limelight(){
         nt = NetworkTableInstance.getDefault().getTable("limelight");
         nt.getEntry("pipeline").setNumber(1);
 
