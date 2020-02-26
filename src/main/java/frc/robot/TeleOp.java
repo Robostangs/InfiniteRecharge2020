@@ -2,146 +2,288 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TeleOp{
+public class TeleOp {
+
+    public static Drivetrain dt = Drivetrain.getInstance();
+    public static Shooter shooter = Shooter.getInstance();
+    public static Intake intake = Intake.getInstance();
+    public static Climber climber = Climber.getInstance();
+
     private static XBoxController driver;
     private static XBoxController manip;
     public static TeleOp instance;
 
-    private static double speed;
-    private static double elevspeed;
-    private static double hoodPosition;
+    private static boolean previousSensorValue;
 
-    private static double kP;
-    private static double kI;
-    private static double kD;
-    private static double kF;
-
-
-    //led checks
+    // led checks
     public static boolean elevLEDS;
     public static boolean shooterLEDS;
     public static boolean shootingLEDS;
 
-    
-
-    public static TeleOp getInstance(){
-        if(instance == null)
+    public static TeleOp getInstance() {
+        if (instance == null)
             instance = new TeleOp();
         return instance;
     }
 
-    private TeleOp(){
-        
+    private TeleOp() {
         driver = new XBoxController(Constants.XBOX_DRIVER);
         manip = new XBoxController(Constants.XBOX_MANIP);
-        speed = 0;
-        elevspeed = 0.3;
-        kP = 0.2;
-        kI = 0.000001;
-        kD = 5.1;
-        kF = 0.048;
+
+        // shooter defaults
 
         elevLEDS = false;
         shooterLEDS = false;
         shootingLEDS = false;
-        
-        
+
+
+        previousSensorValue = false;
 
     }
 
-    public static void run(){
+    public static void run() {
+
+        smartDashboard();
 
 
-        
-        speed = SmartDashboard.getNumber("Jeff", speed);
-        elevspeed = SmartDashboard.getNumber("elevspeed",elevspeed);
-        hoodPosition = SmartDashboard.getNumber("Hood Position", 0);
-        
-       
-        
         Limelight.refresh();
 
-        SmartDashboard.putNumber("Tv",Limelight.getTv());
-        double distance = Utils.dist(Limelight.getTx(),Limelight.getTy());
+        //PID VALUES
+        shooter.setkP(Constants.SHOOTER_kP);
+        shooter.setkI(Constants.SHOOTER_kI);
+        shooter.setkD(Constants.SHOOTER_kD);
+        shooter.setkF(Constants.SHOOTER_FEED_FWD);
 
-        SmartDashboard.putNumber("kP",kP);
-        SmartDashboard.putNumber("kI",kI);
-        SmartDashboard.putNumber("kD",kD);
-        SmartDashboard.putNumber("kF",kF);
-        SmartDashboard.putNumber("distance",distance);
-        SmartDashboard.putNumber("LEDS",LEDs.getColor());
+        //should already work, just in case
+        dt.setgkP(Constants.GYROkP);
+        dt.setgkI(Constants.GYROkI);
+        dt.setgkD(Constants.GYROkD);
 
 
-        SmartDashboard.putNumber("temp", Shooter.getTemp());
-        SmartDashboard.putNumber("% Output", Shooter.getPercentOutput());
-        SmartDashboard.putNumber("Velocity",(15.0/50.0)*Shooter.getVelo());
-        Shooter.setkD(kD);
-        Shooter.setkI(kI);
-        Shooter.setkP(kP);
-        Shooter.setkF(kF);
 
+        /* DRIVER CONTROLS */
         
-        if(shooterLEDS == true)
-        {   
+        if (driver.getLeftBumper()) {
+            if (Limelight.getTv() == 1) {
+                Limelight.ledsOn();
+           
+
+                dt.setAngle(dt.getAHRS() + Limelight.getTx());
+                dt.targetedDrive(Utils.expodeadZone(-driver.getRightStickYAxis())); // allows driver to move back and forth during lineup
+
+
+                if(distance() >= 47.7 && distance() <= 79.5){
+
+                    shooter.hoodPosition(Utils.autoFormula(47.7, 79.5, -0.7, -0.5));
+                }
+                else if(distance() >= 79.5 && distance() <= 116.5){
+                    shooter.hoodPosition(Utils.autoFormula(79.5, 116.5, -0.5, -0.3));
+                }
+                else if(distance() >= 116.5 && distance() <= 145.65){
+                    shooter.hoodPosition(Utils.autoFormula(116.5, 145.65, -0.3, -0.45));
+                }
+                else{
+                    shooter.hoodPosition(Constants.LAYUP_POSITION);
+                }
+
+                
+               
+
+            } else {
+                //shooter.hoodPosition(Constants.LAYUP_POSITION);
+                Limelight.ledsFlash();
+                //dt.pidDisable();
+                dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
+            }
+        } else {
+            Limelight.ledsOff();
+            //dt.pidDisable();
+            dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
+        }
+
+
+
+        if(Utils.expodeadZone(driver.getRightTriggerAxis()) > 0){
+            if(driver.getRightTriggerAxis() > 0.3){
+                climber.compress();
+            }
+            else{
+                climber.decompress();
+            }
+            
+            
+            
+            climber.climb(Utils.expodeadZone(-driver.getRightTriggerAxis()), Utils.expodeadZone(-driver.getRightTriggerAxis()));
+        }
+        else if(Utils.expodeadZone(driver.getLeftTriggerAxis()) > 0){
+            climber.compress();
+            climber.climb(Utils.expodeadZone(driver.getLeftTriggerAxis()), Utils.expodeadZone(driver.getLeftTriggerAxis()));
+        }
+        else{
+            climber.decompress();
+            climber.climb(0, 0);
+        }
+        
+        if (driver.getRightBumper()) {
+            dt.highGear();
+        } else {
+            dt.lowGear();
+        }
+
+        /* MANIP CONTROLS */
+
+
+        // LEDS         *not implemented yet*
+        if (shooterLEDS == true) {
             LEDs.setColor(0.65);
-        }
-        else if(shootingLEDS == true){
+        } else if (shootingLEDS == true) {
             LEDs.setColor(0.63);
-        }
-        else if(elevLEDS == true){
+        } else if (elevLEDS == true) {
             LEDs.setColor(-0.81);
-        }
-        else
-        {
+        } else {
             LEDs.setColor(-0.99);
         }
 
-        
 
-        //Shooter
-        if(driver.getAButton()){
-            Shooter.launch((50.0/15.0)*speed);
-            if(Shooter.getVelo() < speed - 10)
-                {
-                    shootingLEDS = true;
-                    shooterLEDS = false;   
-                }
-                else{
-                    shootingLEDS = false;
-                    shooterLEDS = true;
-                }
-        }
-        else{
-            Shooter.pidDisable(0);
-            shooterLEDS = false;
-        }        
-        
-        //Elevator
-        if(driver.getBButton()){
-            Shooter.elevate(elevspeed);
-            elevLEDS = true;
-        }
-        if(driver.getXButton()){
-            Shooter.elevate(0);
-            elevLEDS = false;
-        }
      
 
-        //Hood
-        if(driver.getYButton())
-        {
-            Shooter.hoodPosition(Constants.LAYUP_POSITION);
-            Shooter.launch((50.0/15.0)*Constants.LAYUP_SPEED);
-                
-        }
-        else{
-            Shooter.hoodPosition(hoodPosition);
-        }
+        // Shooter
+        if (manip.getRightTriggerButton()) {
+            Limelight.ledsOn();
+            
+            
+            if(distance() >= 47.7 && distance() <= 79.5){
 
+                shooter.launch(Utils.autoFormula(47.7, 79.5, 4400, 5000) * (50.0/15));
+            }
+            else if(distance() >= 79.5 && distance() <= 116.5){
+                shooter.launch(Utils.autoFormula(79.5, 116.5, 5000, 6000) * (50.0/15));
+            }
+            else if(distance() >= 116.5 && distance() <= 145.65){
+                shooter.launch(Utils.autoFormula(116.5, 145.65, 6000, 6200) * (50.0/15));
+            }
+            else{
+                shooter.launch(Constants.LAYUP_SPEED * (50.0/15));
+            }
 
+            
+            
 
+            if(manip.getLeftStickYAxis() < -0.2){
+                intake.beltMove(0.7);                   
+            }
+            else if(manip.getLeftStickYAxis() > 0.2){
+                intake.beltMove(-manip.getLeftStickYAxis());
+            }
+            else{
+                intake.beltMove(0);
+            }
+
+            /*
+            if (shooter.getVelo() < speed - 5) {
+                shootingLEDS = true;
+                shooterLEDS = false;
+            } else {
+                shootingLEDS = false;
+                shooterLEDS = true;
+            }
+            */
+
+        } 
+        else if (manip.getYButton()) {
+            //layups / close range
+            shooter.hoodPosition(Constants.LAYUP_POSITION);
+            shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
+            if(Utils.expodeadZone(manip.getLeftStickYAxis()) < -0.1){
+                intake.beltMove(0.4);
+
+            }
+            else{
+                intake.beltMove(0);
+            }
+        } else {
+           
         
+
+            
+
+            // automatic belt
+            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true) {
+                intake.resetBeltEncoder();
+                LEDs.setColor(-0.29); // blue light chase
+                intake.beltMove(0.2);
+                shooter.launchNoPID(0.3, 0.3);
+
+            } else {
+                shooter.launchNoPID(0, 0);
+                if (intake.getBeltEncoder() < Constants.BELT_BALL_MOVED && manip.getRightTriggerButton() != true) {
+                    intake.beltMove(0);
+                }
+
+            }
+
+        }
+
+        // intake bar and belt
+        if (manip.getLeftBumper()) {
+            intake.barDown(true);
+
+           
+            intake.ingest(Utils.expodeadZone(manip.getRightStickYAxis()));
+            
+        } else {
+            intake.barDown(false);
+            intake.ingest(0);
+        }
         
+
     }
 
+    public static void smartDashboard() {
+
+
+        SmartDashboard.putNumber("MotorSpeed", dt.getSpeed());
+
+        //SmartDashboard.putNumber("Gyro #", dt.getAHRS());
+
+
+        // drivetrain set values
+
+
+        /*dt.setkP2(SmartDashboard.getNumber("kP 2", 0));
+        dt.setkI2(SmartDashboard.getNumber("kI 2", 0));
+        dt.setkD2(SmartDashboard.getNumber("kD 2", 0));*/
+
+        //speed = SmartDashboard.getNumber("Jeff", speed);
+
+        double distance = Utils.dist(Limelight.getTx(), Limelight.getTy());
+
+        // Shooter values
+        SmartDashboard.putNumber("distance", distance);
+        SmartDashboard.putNumber("Velocity", (15.0 / 50.0) * shooter.getVelo());
+    }
+
+    public static String highSensorState() {
+
+        if (previousSensorValue == false && intake.getHighSensor() == true) {
+            System.out.println("new ball in");
+            return "new ball in";
+        }
+
+        if (previousSensorValue == false && intake.getHighSensor() == false) {
+            return "no ball in";
+
+        }
+
+        previousSensorValue = intake.getHighSensor();
+
+        return "same ball in";
+
+    }
+
+    private static double distance(){
+        return Utils.dist(Limelight.getTx(), Limelight.getTy());
+    }
+
+    
 }

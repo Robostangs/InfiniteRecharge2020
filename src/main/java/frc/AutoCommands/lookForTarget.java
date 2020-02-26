@@ -2,47 +2,57 @@ package frc.AutoCommands;
 
 import frc.robot.Drivetrain;
 import frc.robot.Limelight;
+import frc.robot.Shooter;
 
 
 public class lookForTarget extends AutoCommandBase{
     private double power;
     private Boolean isLeft;
-    private Drivetrain Drivetrain = new Drivetrain();
+    private double shootPower;
+    private double actPosition;
+    private Drivetrain drivetrain = Drivetrain.getInstance();
+    private Shooter shooter = Shooter.getInstance();
 
 	
 
-	public lookForTarget(double timeOut, double power, Boolean isLeft){
+	public lookForTarget(double timeOut, double power, Boolean isLeft, double shootSpeed,double act){
 
 		super(timeOut);
 
         this.power = power;
 
         this.isLeft = isLeft;
-        
-		
+        this.shootPower = shootSpeed;
+		this.actPosition = act;
 
 
 	}
 
     @Override
     public void init(){
-
+        shooter.hoodPosition(actPosition);
     }
 
     @Override
     protected void run(){
+        shooter.launch(shootPower*(15/50));
+        Limelight.refresh();
         if(Limelight.getTv() == 1){
-            Drivetrain.setAngle(Drivetrain.getAHRS() + Limelight.getTx());
-            Drivetrain.targetedDrive(0);
+            Limelight.ledsOn();
+            drivetrain.setAngle(drivetrain.getAHRS() + Limelight.getTx());
+            drivetrain.AutoTargetedDrive(0);
+
 
             System.out.println("Target Found");
         }
         else{
+            Limelight.ledsOn();
+            //drivetrain.pidDisable();
             if(isLeft == true){
-                Drivetrain.drive(-power, power);  //turns left
+                drivetrain.drive(-power, power);  //turns left
             }
             else{
-                Drivetrain.drive(power, -power); //turns rigt
+                drivetrain.drive(power, -power); //turns rigt
             }
 
             System.out.println("Searching for Target....");
@@ -52,7 +62,7 @@ public class lookForTarget extends AutoCommandBase{
 
     @Override
     public void end(){
-        Drivetrain.stop();
+        drivetrain.stop();
     }
 
     @Override

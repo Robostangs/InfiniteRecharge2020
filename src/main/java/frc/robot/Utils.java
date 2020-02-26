@@ -3,6 +3,12 @@ package frc.robot;
 public class Utils{
 
 
+    //also works for power
+    public static double distToActuator(double distance, double slope, double min){
+
+        return slope*distance - min;
+    }
+
 
     public static double dist(double tx,double ty){
         return Constants.TARGET_HEIGHT/(Math.tan(degToRad(ty+Constants.LIMELIGHT_ANGLE)));
@@ -24,11 +30,15 @@ public class Utils{
         //use this formula in drive distance and set double feet to 4
     }
 
+    public static double autoFormula(double minDist, double maxDist, double minAct, double maxAct){
+        return (((maxDist - dist(Limelight.getTx(), Limelight.getTy())) * minAct) + (((dist(Limelight.getTx(), Limelight.getTy()) - minDist)) * minAct))/(maxDist - minDist);
+    }
+
     public static double expodeadZone(double input){
-        if(-0.5>input){
+        if(-0.1>input){
             return -1.108*(input+.05)*(input+.05);
         }
-        else if(0.5<input){
+        else if(0.1<input){
             return 1.108*(input+.05)*(input+.05);
         }
         else{

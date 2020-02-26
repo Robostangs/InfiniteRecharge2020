@@ -23,6 +23,7 @@ public class Limelight {
 
     public Limelight(){
         nt = NetworkTableInstance.getDefault().getTable("limelight");
+        nt.getEntry("pipeline").setNumber(1);
 
     }
 
@@ -32,6 +33,7 @@ public class Limelight {
         ty = nt.getEntry("ty").getDouble(0);
         tv = nt.getEntry("tv").getDouble(0);
         ta = nt.getEntry("ta").getDouble(0);
+        
     }
 
     public static double getTx(){
@@ -46,6 +48,19 @@ public class Limelight {
     public static double getTa(){
         return ta;
     }
+
+    public static void ledsOn(){
+        nt.getEntry("ledMode").setNumber(0);
+    }
+    public static void ledsOff(){
+        nt.getEntry("ledMode").setNumber(1);
+    }
+
+    public static void ledsFlash(){
+        nt.getEntry("ledMode").setNumber(2);
+    }
+
+
 
 
     

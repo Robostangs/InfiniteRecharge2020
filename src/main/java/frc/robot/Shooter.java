@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -9,10 +7,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Timer;
+import frc.RobotTests.ShooterTester;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFXPIDSetConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 
 
@@ -21,9 +17,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 public class Shooter extends Subsystems{
 
     public static Shooter instance;
-    private static TalonFX launcherLeft, launcherRight;
-    private static TalonSRX elevator;
-    private static Servo servoLeft, servoRight;
+    private  TalonFX launcherLeft, launcherRight;
+    private  TalonSRX elevator;
+    private  Servo servoLeft, servoRight;
  
     
     public static Shooter getInstance(){
@@ -32,7 +28,7 @@ public class Shooter extends Subsystems{
         return instance;
     }
 
-    public Shooter(){
+    private Shooter() {
         launcherLeft = new TalonFX(Constants.SHOOTER_TALON_LEFT);
         launcherRight = new TalonFX(Constants.SHOOTER_TALON_RIGHT);
 
@@ -44,7 +40,7 @@ public class Shooter extends Subsystems{
         servoRight.setBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
 
     
-        launcherRight.follow(launcherLeft);
+        
         
         
         //resets before setting configs
@@ -55,6 +51,7 @@ public class Shooter extends Subsystems{
 
         //allows setinverted to be called
         launcherLeft.setSensorPhase(true);
+        launcherRight.setSensorPhase(true);
 
         //maxes and mins
         launcherLeft.configNominalOutputForward(0, Constants.kTimeoutMs);
@@ -68,143 +65,87 @@ public class Shooter extends Subsystems{
         launcherLeft.config_kD(Constants.kPIDLoopIdx, Constants.SHOOTER_kD, Constants.kTimeoutMs);
         launcherLeft.config_kF(Constants.kPIDLoopIdx, Constants.SHOOTER_FEED_FWD, Constants.kTimeoutMs);
         
+        launcherLeft.setInverted(true); 
+        launcherRight.follow(launcherLeft); 
+        
         
     }
 
-    public static void launch(double speed)
+    public  void launch(double speed)
     {
         launcherLeft.set(ControlMode.Velocity, speed);
-        launcherLeft.setInverted(true);  
+        launcherRight.follow(launcherLeft);
     }
 
-    public static void launchNoPID(double leftSpeed, double rightSpeed) // percent output
+    public  void launchNoPID(double leftSpeed, double rightSpeed) // percent output
     {
         launcherLeft.set(ControlMode.PercentOutput, leftSpeed);
-        launcherRight.set(ControlMode.PercentOutput, rightSpeed);
+        launcherRight.follow(launcherLeft);
     }
 
-    public static void pidDisable(double speed)
+    public  void pidDisable(double speed)
     {
         launcherLeft.set(ControlMode.PercentOutput, speed);
     }
 
-    public static double getPercentOutput()
+    public  double getPercentOutput()
     {
         return launcherLeft.getMotorOutputPercent();
     }
 
-   public static void elevate(double power)
+   public  void elevate(double power)
     {
         elevator.set(ControlMode.PercentOutput, power);
     }
 
-    public static double elevatePercent()
+    public  double elevatePercent()
     {
         return elevator.getMotorOutputPercent();
     }
 
     //value between 0 and 1
-    public static void hoodPosition(double position)
+    public  void hoodPosition(double position)
     {
         servoLeft.setSpeed(position);
         servoRight.setSpeed(position);
     }
 
 
-    public static void setkP(double x){
+    public  void setkP(double x){
         launcherLeft.config_kP(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkI(double x){
+    public  void setkI(double x){
         launcherLeft.config_kI(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkD(double x){
+    public  void setkD(double x){
         launcherLeft.config_kD(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static void setkF(double x){
+    public  void setkF(double x){
         launcherLeft.config_kF(Constants.kPIDLoopIdx, x, Constants.kTimeoutMs);
     }
 
-    public static double getVelo(){
+    public  double getVelo(){
         return launcherLeft.getSelectedSensorVelocity();
     }
 
-    public static double getVeloRight(){
+    public  double getVeloRight(){
         return launcherLeft.getSelectedSensorVelocity();
     }
 
-    public static double getTemp(){
+    public  double getTemp(){
         return launcherLeft.getTemperature();
     }
 
-    public static double getRighTemp(){
+    public double getRighTemp(){
         return launcherRight.getTemperature();
     }
 
     @Override
     public void checkStart() {
-        Timer t = new Timer();
-        List<Double> left = new ArrayList<Double>();
-        List<Double> right = new ArrayList<Double>();
-        List<Double> elev = new ArrayList<Double>();
-
-        t.start();
-        launchNoPID(0.5, 0);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            left.add(launcherLeft.getMotorOutputPercent()); //possibly change
-            Timer.delay(0.1);
-        }
-        double leftAvg = 0;
-        for(double power: left){
-            leftAvg = leftAvg + power;
-        }
-        if(Math.abs(leftAvg - 0.5) > 0.05){
-            System.out.println("Left side of shooter is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-        
-        Timer.delay(3);
-        t.reset();
-
-        t.start();
-        launchNoPID(0, 0.5);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            right.add(launcherRight.getMotorOutputPercent()); //possibly change
-            Timer.delay(0.1);
-        }
-        double rightAvg = 0;
-        for(double power: right){
-            rightAvg = rightAvg + power;
-        }
-        if(Math.abs(leftAvg - 0.5) > 0.05){
-            System.out.println("Left side of shooter is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-
-        Timer.delay(3);
-        t.reset();
-
-        t.start();
-        Shooter.elevate(0.5);
-        
-        while(1 <= t.get() && t.get() <= 2){
-            elev.add(elevator.getMotorOutputPercent()); 
-            Timer.delay(0.1);
-        }
-        double elevAvg = 0;
-        for(double power: elev){
-            elevAvg = elevAvg + power;
-        }
-        if(Math.abs(elevAvg - 0.5) > 0.05){
-            System.out.println("Elevator talon is " + Math.abs(leftAvg - 0.5)*100 + "% slower than it should be...");
-        }
-
-        t.reset();
-
+        ShooterTester.shooterTest(launcherLeft, launcherRight); 
     }
 
     @Override
@@ -212,4 +153,6 @@ public class Shooter extends Subsystems{
         // TODO Auto-generated method stub
 
     }
+
+
 }

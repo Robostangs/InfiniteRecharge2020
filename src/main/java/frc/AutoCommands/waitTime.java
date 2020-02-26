@@ -4,7 +4,7 @@ import frc.robot.Drivetrain;
 
 public class waitTime extends AutoCommandBase {
 
-        private Drivetrain Drivetrain = new Drivetrain();
+        private Drivetrain drivetrain = Drivetrain.getInstance();
 
         public waitTime(double timeOut){
             super(timeOut);
@@ -17,7 +17,7 @@ public class waitTime extends AutoCommandBase {
 
         @Override
         protected void run(){
-            Drivetrain.stop();
+            drivetrain.stop();
         }
 
         @Override

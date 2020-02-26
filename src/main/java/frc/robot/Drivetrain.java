@@ -1,9 +1,7 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -13,36 +11,44 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.RobotTests.Drivetraintester;
 
 public class Drivetrain extends Subsystems {
     public static Drivetrain instance;
     public CANSparkMax rightFront, leftFront, leftBack, rightBack, leftMiddle, rightMiddle;
-
-    private CANPIDController pidControllerLeftFront, pidControllerRightFront;
     private CANEncoder encoderLeftFront, encoderRightFront;
+    CANPIDController pidControllerLeftFront, pidControllerRightFront;
     private AHRS gyro;
     public boolean isPidEnabled = false;
     private PIDController gyropid;
     private Solenoid shifter;
-    private Drivetrain Drivetrain = new Drivetrain();
 
-    public Drivetrain getInstance() {
+    public double prevTime;
+    public double prevError;
+    public double setPoint;
+
+
+    public static Drivetrain getInstance() {
         if (instance == null)
             instance = new Drivetrain();
         return instance;
     }
 
-    public Drivetrain() {
+    private Drivetrain() {
+
         rightFront = new CANSparkMax(Constants.TALON_RIGHTFRONT, MotorType.kBrushless);
         leftFront = new CANSparkMax(Constants.TALON_LEFTFRONT, MotorType.kBrushless);
         leftBack = new CANSparkMax(Constants.TALON_LEFTBACK, MotorType.kBrushless);
         rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
         leftMiddle = new CANSparkMax(Constants.TALON_LEFTMIDDLE, MotorType.kBrushless);
-        leftMiddle = new CANSparkMax(Constants.TALON_RIGHTMIDDLE, MotorType.kBrushless);
+        rightMiddle = new CANSparkMax(Constants.TALON_RIGHTMIDDLE, MotorType.kBrushless);
 
+        encoderLeftFront = leftFront.getEncoder();
+        encoderRightFront = rightFront.getEncoder();
+
+        pidControllerLeftFront = leftFront.getPIDController();
+        pidControllerRightFront = rightFront.getPIDController();
         shifter = new Solenoid(Constants.SOLENOID_SHIFTER);
 
         gyro = new AHRS(SPI.Port.kMXP);
@@ -51,11 +57,9 @@ public class Drivetrain extends Subsystems {
         gyropid.enableContinuousInput(-180, 180);
         gyropid.setTolerance(1d);
 
-        pidControllerRightFront = rightFront.getPIDController();
-        pidControllerLeftFront = leftFront.getPIDController();
-
-        encoderRightFront = rightFront.getEncoder();
-        encoderLeftFront = leftFront.getEncoder();
+        gyropid.setP(Constants.GYROkP);
+        gyropid.setI(Constants.GYROkI);
+        gyropid.setD(Constants.GYROkD);
 
         /******************************************************* */
         // Slot 1
@@ -73,15 +77,15 @@ public class Drivetrain extends Subsystems {
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 1);
 
         // Slot 2
-        pidControllerRightFront.setP(Constants.kP, 2);
-        pidControllerRightFront.setI(Constants.kI, 2);
-        pidControllerRightFront.setD(Constants.kD, 2);
-        pidControllerRightFront.setIZone(Constants.kIz, 2);
+        pidControllerRightFront.setP(Constants.kP2, 2);
+        pidControllerRightFront.setI(Constants.kI2, 2);
+        pidControllerRightFront.setD(Constants.kD2, 2);
+        pidControllerRightFront.setIZone(Constants.kIz2, 2);
 
-        pidControllerLeftFront.setP(Constants.kP, 2);
-        pidControllerLeftFront.setI(Constants.kI, 2);
-        pidControllerLeftFront.setD(Constants.kD, 2);
-        pidControllerLeftFront.setIZone(Constants.kIz, 2);
+        pidControllerLeftFront.setP(Constants.kP2, 2);
+        pidControllerLeftFront.setI(Constants.kI2, 2);
+        pidControllerLeftFront.setD(Constants.kD2, 2);
+        pidControllerLeftFront.setIZone(Constants.kIz2, 2);
 
         pidControllerLeftFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
@@ -90,33 +94,40 @@ public class Drivetrain extends Subsystems {
         rightBack.follow(rightFront);
         rightMiddle.follow(rightFront);
 
-        leftBack.follow(leftBack);
+        leftBack.follow(leftFront);
         leftMiddle.follow(leftFront);
+
+        capSpeed(Constants.DTMAX_AUTO_SPEED);
     }
 
     public void drive(double powerLeft, double powerRight) {
-        pidControllerRightFront.setReference(powerRight, ControlType.kDutyCycle, 1);
+        pidControllerRightFront.setReference(-powerRight, ControlType.kDutyCycle, 1);
         pidControllerLeftFront.setReference(powerLeft, ControlType.kDutyCycle, 1);
     }
 
     public void driveRotations(double rotLeft, double rotRight) {
-        // on second pid slot
+        // on second pid slot   //change
+        resetEncoders();
         pidControllerRightFront.setReference(rotLeft, ControlType.kPosition, 2);
-        pidControllerLeftFront.setReference(rotLeft, ControlType.kPosition, 2);
+        pidControllerLeftFront.setReference(-rotRight, ControlType.kPosition, 2);
     }
 
     public void driveNoPID(double left, double right) {
-        leftFront.set(left);
+        leftFront.set(left);    //change
         rightFront.set(right);
     }
 
-    public void stop() {
-        rightFront.set(0);
-        leftFront.set(0);
+    public void arcadeDrive(double fwd, double tur) {
+        drive(Utils.ensureRange(fwd + tur, -1d, 1d), Utils.ensureRange(fwd - tur, -1d, 1d));
     }
 
-    public void arcadeDrive(double fwd, double tur) {
-        drive(Utils.ensureRange(fwd + tur, -1d, 1d), Utils.ensureRange(fwd - tur, -1, 1));
+    public void capSpeed(double cap){
+        pidControllerLeftFront.setOutputRange(-cap, cap, 2);
+        pidControllerRightFront.setOutputRange(-cap, cap,2);
+    }
+
+    public double getSpeed(){
+        return leftFront.getAppliedOutput();
     }
 
     public void highGear() {
@@ -136,9 +147,7 @@ public class Drivetrain extends Subsystems {
     }
 
     public double getEncoderLeft() {
-
         return encoderLeftFront.getPosition();
-
     }
 
     public double getVelocityRight() {
@@ -149,24 +158,61 @@ public class Drivetrain extends Subsystems {
         return encoderLeftFront.getVelocity();
     }
 
+    public void resetEncoders(){
+        encoderLeftFront.setPosition(0);
+        encoderRightFront.setPosition(0);
+    }
+
     // PID / auto
     public void setAngle(double angle) {
-        gyropid.setSetpoint(angle);
-        if (!ispidEnabled()) {
-            System.out.println("PID Enabled");
-            gyropid.reset();
-            pidEnable();
-        }
+        setPoint = angle;
 
     }
 
     public void targetedDrive(double power) {
-        if (isPidEnabled) {
-            Drivetrain.arcadeDrive(power, gyropid.calculate(Drivetrain.getAHRS()));
-        }
+        arcadeDrive(power, pidCalculate(getAHRS()));
     }
 
-    public void pidDisable() {
+    public void AutoTargetedDrive(double power) {
+        arcadeDrive(power, autoPidCalculate(getAHRS()));
+    }
+
+    public void feedValues(){
+        prevTime = System.nanoTime()/1000000000.0;
+
+        prevError = getAHRS();
+    }
+
+    public double pidCalculate(double error){
+        double timeChange = (System.nanoTime()/1000000000.0)-prevTime;
+        if(timeChange == 0){
+            timeChange = 100;
+        }
+        double changeError = error-prevError;
+        
+        return (Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint));
+
+        //return (SmartDashboard.getNumber("Gyro kD",0)*(changeError/timeChange))+(SmartDashboard.getNumber("Gyro kP", 0)*(error-setPoint));
+        
+    }
+
+    public double autoPidCalculate(double error){
+        double timeChange = (System.nanoTime()/1000000000.0)-prevTime;
+        if(timeChange == 0){
+            timeChange = 100;
+        }
+        double changeError = error-prevError;
+        
+        return ((Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint)))*(1.0/3.0);
+
+        //return (SmartDashboard.getNumber("Gyro kD",0)*(changeError/timeChange))+(SmartDashboard.getNumber("Gyro kP", 0)*(error-setPoint));
+        
+    }
+
+
+
+
+   /* public void pidDisable() {
         System.out.println("PID Disabled");
         isPidEnabled = false;
     }
@@ -177,7 +223,7 @@ public class Drivetrain extends Subsystems {
 
     public boolean ispidEnabled() {
         return isPidEnabled;
-    }
+    }*/
 
     public void setkD(double kD) {
         pidControllerLeftFront.setD(kD);
@@ -194,6 +240,19 @@ public class Drivetrain extends Subsystems {
         pidControllerRightFront.setP(kP);
     }
 
+    // gyro PID
+    public void setgkP(double gkP) {
+        gyropid.setP(gkP);
+    }
+
+    public void setgkI(double gkI) {
+        gyropid.setI(gkI);
+    }
+
+    public void setgkD(double gkD) {
+        gyropid.setD(gkD);
+    }
+
     // pid slot 2
     public void setkP2(double kP) {
         pidControllerLeftFront.setP(kP, 2);
@@ -208,19 +267,19 @@ public class Drivetrain extends Subsystems {
     public void setkD2(double kD) {
         pidControllerLeftFront.setD(kD, 2);
         pidControllerRightFront.setD(kD, 2);
-       
+
     }
 
-
-    
     @Override
     public void checkStart() {
         Drivetraintester.dtTester(leftFront, leftMiddle, leftBack, rightFront, rightMiddle, rightBack);
-        
-        
-
     }
-    
+
+    public void stop() {
+        rightFront.set(0);
+        leftFront.set(0);
+    }
+
     
  
 

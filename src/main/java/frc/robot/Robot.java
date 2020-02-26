@@ -10,9 +10,17 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.AutoModes.AutoMode;
+import frc.AutoModes.DriveStraight;
+import frc.AutoModes.ShootfromInit;
+import frc.RobotTests.Drivetraintester;
+import frc.RobotTests.IntakeTester;
+import frc.RobotTests.ShooterTester;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,15 +30,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<AutoMode> m_chooser = new SendableChooser<AutoMode>();
+  public static Drivetrain dt;
+  public static Shooter sh;
+  public static Intake it;
+  public static TeleOp tp;
+  public static AutoMode phillip;
 
-  private Drivetrain dt = new Drivetrain();
-  private Shooter sh = new Shooter();
-
-  private List<Subsystems> Subsystems = new ArrayList<Subsystems>();
+  private List<Subsystems> subsystems = new ArrayList<Subsystems>();
 
 
 
@@ -42,9 +50,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.setDefaultOption("DriveStraight", new ShootfromInit());
     SmartDashboard.putData("Auto choices", m_chooser);
+    dt = Drivetrain.getInstance();
+    sh = Shooter.getInstance();
+    LEDs.getInstance();
+    Climber.getInstance();
+    it = Intake.getInstance();
+    tp = TeleOp.getInstance();
+    Limelight.getInstance();
+    Limelight.ledsOff();
+    
+        
+
   }
 
   /**
@@ -72,9 +90,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
+    phillip = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Auto selected: " + phillip.toString());
+    phillip.start();
   }
 
   /**
@@ -82,40 +101,65 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+      
   }
 
+
+  @Override
+  public void teleopInit() {
+
+    SmartDashboard.putNumber("Gyro kP", 0);
+    SmartDashboard.putNumber("Gyro kI", 0);
+    SmartDashboard.putNumber("Gyro kD", 0); 
+    
+    SmartDashboard.putNumber("kP 2", 0);
+    SmartDashboard.putNumber("kI 2", 0);
+    SmartDashboard.putNumber("kD 2", 0);
+
+/*
+    SmartDashboard.putNumber("Shooter kP", 0);
+    SmartDashboard.putNumber("Shooter kI", 0);
+    SmartDashboard.putNumber("Shooter kD", 0);
+    SmartDashboard.putNumber("Shooter kF", 0);
+*/
+
+    SmartDashboard.putNumber("Jeff", 0);
+    SmartDashboard.putNumber("Hood Position", 0);
+
+  }
+  
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
+    TeleOp.run();
+    dt.feedValues();
   }
 
  @Override
   public void testInit() {
+    //set music selection and LEDS to indicate testing
+   
+    LEDs.setColor(0.61); //change to flashing red
 
-
-    Subsystems.add(dt);
-    Subsystems.add(sh);
+    //adds subsystems to list to iterate through
+    subsystems.add(dt); 
+    subsystems.add(sh);
+    subsystems.add(it);
 
     System.out.println(" Running Subsystem checks... ");
     System.out.println("----------------------------");
-    for (Subsystems sub : Subsystems)
+
+    //iterate through each subsystem check
+    for (Subsystems sub : subsystems)
     {
-      System.out.println("\\ Checking status of " + sub + " \\");
       System.out.println();
       sub.checkStart();
       System.out.println("------------------------------");
     }
+
+    Music.loadMusicSelection(new TalonFX(Constants.SHOOTER_TALON_LEFT), new TalonFX(Constants.SHOOTER_TALON_RIGHT), new TalonFX(Constants.leftClimber), new TalonFX(Constants.rightClimber), "low_rider.chrp");
     
   }
   /**
@@ -123,5 +167,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    //play low rider if test suceeds and change LEDS to green
+    if(ShooterTester.allMotorsFunctional() && IntakeTester.allMotorsFunctional() && Drivetraintester.allMotorsFunctional()){
+      LEDs.setColor(0.77);
+      Music.play();
+    }
+    //leds keep flashing red and erros display
+    else{
+      LEDs.setColor(0.61);
+    }
   }
 }
