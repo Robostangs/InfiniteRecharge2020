@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   public static AutoMode phillip;
 
   private List<Subsystems> subsystems = new ArrayList<Subsystems>();
-  private boolean testsComplete=false;
+
 
 
   //add subsystems to list
@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
  @Override
   public void testInit() {
     //set music selection and LEDS to indicate testing
-    testsComplete=false;
+   
     LEDs.setColor(0.61); //change to flashing red
 
     //adds subsystems to list to iterate through
@@ -158,8 +158,8 @@ public class Robot extends TimedRobot {
       sub.checkStart();
       System.out.println("------------------------------");
     }
-    testsComplete=true;
-    Music.loadMusicSelection(new TalonFX(Constants.SHOOTER_TALON_LEFT), new TalonFX(Constants.SHOOTER_TALON_RIGHT), new TalonFX(Constants.CLIMBER_TALON_LEFT), new TalonFX(Constants.CLIMBER_TALON_RIGHT), "low_rider.chrp");
+
+    Music.loadMusicSelection(new TalonFX(Constants.SHOOTER_TALON_LEFT), new TalonFX(Constants.SHOOTER_TALON_RIGHT), new TalonFX(Constants.leftClimber), new TalonFX(Constants.rightClimber), "low_rider.chrp");
     
   }
   /**
@@ -167,17 +167,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    if (testsComplete) {
-      // play low rider if test suceeds and change LEDS to green
-      if (ShooterTester.allMotorsFunctional() && IntakeTester.allMotorsFunctional()
-          && Drivetraintester.allMotorsFunctional()) {
-        LEDs.setColor(0.77);
-        Music.play();
-      }
-      // leds keep flashing red and erros display
-      else {
-        LEDs.setColor(0.61);
-      }
+    //play low rider if test suceeds and change LEDS to green
+    if(ShooterTester.allMotorsFunctional() && IntakeTester.allMotorsFunctional() && Drivetraintester.allMotorsFunctional()){
+      LEDs.setColor(0.77);
+      Music.play();
+    }
+    //leds keep flashing red and erros display
+    else{
+      LEDs.setColor(0.61);
     }
   }
 }

@@ -11,7 +11,7 @@ import frc.robot.Intake;
 
 public class IntakeTester {
 
-    private static Intake it = Intake.getInstance();
+    private static Intake IT = Intake.getInstance();
     private static boolean allMotorsFunctional = true;
 
     public static void itTester(TalonSRX belt, TalonSRX ingestor)
@@ -24,14 +24,13 @@ public class IntakeTester {
         motors.add(belt);
         motors.add(ingestor);
         
+        IT.beltMove(1.0);
+        IT.ingest(1.0);
+
         System.out.println();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("                       I N T A K E                                ");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-        it.beltMove(1.0);
-        it.ingest(1.0);
-        Timer.delay(2);
         
         int motornum = 0;
         
@@ -69,8 +68,10 @@ public class IntakeTester {
 
         }
 
-        Timer.delay(2);
-        it.stop();
+        Timer.delay(5);
+
+        IT.stop();
+
         
     }
 

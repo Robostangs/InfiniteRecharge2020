@@ -71,15 +71,10 @@ public class Shooter extends Subsystems{
         
     }
 
-    private  void launch(double speed)
+    public  void launch(double speed)
     {
         launcherLeft.set(ControlMode.Velocity, speed);
         launcherRight.follow(launcherLeft);
-    }
-
-    public  void launchRPM(double rpm)
-    {
-        launch(rpm*(50.0/15.0));
     }
 
     public  void launchNoPID(double leftSpeed, double rightSpeed) // percent output
@@ -147,39 +142,6 @@ public class Shooter extends Subsystems{
     public double getRighTemp(){
         return launcherRight.getTemperature();
     }
-
-    public void autoHoodPosition(double distance){
-        if (distance<=47.7){
-            hoodPosition(Constants.LAYUP_POSITION);
-        }
-        else if(distance <= 79.5){
-            hoodPosition(Utils.autoFormula(47.7, 79.5, -0.7, -0.5));
-        }
-        else if(distance <= 116.5){
-            hoodPosition(Utils.autoFormula(79.5, 116.5, -0.5, -0.3));
-        }
-        else {//hope for the best
-            hoodPosition(Utils.autoFormula(116.5, 145.65, -0.3, -0.45));
-        }
-    }
-
-    public void autoLaunchSpeed(double distance){
-        if (distance<=47.7){
-            launchRPM(Constants.LAYUP_SPEED);
-        }
-        else if(distance <= 79.5){
-            launchRPM(Utils.autoFormula(47.7, 79.5, 4400, 5000));
-        }
-        else if(distance <= 116.5){
-            launchRPM(Utils.autoFormula(79.5, 116.5, 5000, 6000));
-        }
-        else {//hope for the best
-            launchRPM(Utils.autoFormula(116.5, 145.65, 6000, 6200));
-        }
-    }
-
-
-
 
     @Override
     public void checkStart() {

@@ -12,14 +12,13 @@ import frc.robot.Drivetrain;
 public class Drivetraintester {
 
     private static Drivetrain dt = Drivetrain.getInstance();
-    private static boolean allMotorsFunctional = true;
 
     public static void dtTester(CANSparkMax leftFront, CANSparkMax leftMiddle, CANSparkMax leftBack, CANSparkMax rightFront, CANSparkMax rightMiddle, CANSparkMax rightBack)
     {
 
         
         List<CANSparkMax> motors = new ArrayList<CANSparkMax>();
-        
+        boolean allMotorsFunctional = true;
 
         motors.add(leftFront);
         motors.add(leftMiddle);
@@ -28,18 +27,19 @@ public class Drivetraintester {
         motors.add(rightMiddle);
         motors.add(rightBack);
 
+        dt.driveNoPID(1, 1);
+        Timer.delay(.5);
+
         System.out.println();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("                      D R I V E T R A I N                         ");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-        dt.driveNoPID(1, 1);
-        Timer.delay(5);//Ensure conditions stabilize before recording data
         
+        int motornum = 0;
         for(CANSparkMax motor : motors){
             
            //returns name of motor for easier analysis
-            System.out.println("Testing " + motors.indexOf(motor)+ "...");
+            System.out.println("Testing " + motors.get(motornum) + "...");
 
             if(Constants.MOTOR_ACCEPTED_MIN_CURRENT >= motor.getOutputCurrent() || motor.getOutputCurrent() >= Constants.MOTOR_ACCEPTED_MAX_CURRENT)
             {   
@@ -58,6 +58,11 @@ public class Drivetraintester {
                 System.out.println();
                 allMotorsFunctional = false;
             }
+
+           
+
+
+            motornum = motornum + 1;
             
 
         if(allMotorsFunctional == true){
@@ -66,7 +71,7 @@ public class Drivetraintester {
 
         }
 
-        Timer.delay(10);
+        Timer.delay(15);
 
        dt.stop();
 
@@ -78,7 +83,7 @@ public class Drivetraintester {
 
 
     public static boolean allMotorsFunctional(){
-        return allMotorsFunctional;//why was this returning allMotorsFunctional()
+        return allMotorsFunctional();
     }
 
 

@@ -77,9 +77,9 @@ public class Constants
 
 
 	//Intake
-	public static final int INTAKE_BELT_TALON = 8;
-	public static final int INTAKE_INGESTOR_BAR_SOLENOID = 5;
-	public static final int INTAKE_INGESTOR_TALON = 9;
+	public static final int INTAKE_BELT = 8;
+	public static final int INTAKE_INGESTORBAR = 5;
+	public static final int INTAKE_INGESTOR = 9;
 
 
 	//Shooter formulas
@@ -90,13 +90,13 @@ public class Constants
 	
 	
 	//climber
-	public static final int CLIMBER_TALON_LEFT = 7;
-	public static final int CLIMBER_TALON_RIGHT = 12;
-	public static final int CLIMBER_RATCHET_SOLENOID = 4;
+	public static final int leftClimber = 7;
+	public static final int rightClimber = 12;
+	public static final int CLIMBER_SOLENOID = 4;
 
 	//sensor values
-	//public static final int ULTRASONIC_LOW = 0;
-	public static final int COLOR_BELT_LOW = 9;
+	public static final int ULTRASONIC_LOW = 0;
+	public static final int COLOR_HIGH = 9;
 	public static final double BELT_BALL_MOVED = -6000;
 	
 	

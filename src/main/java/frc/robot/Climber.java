@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Climber extends Subsystems {
     public static Climber instance;
     public TalonFX leftClimber , rightClimber;
-    public Solenoid ratchetSolenoid;
+    public Solenoid cylinder;
 
     public static Climber getInstance() {
         
@@ -19,27 +19,27 @@ public class Climber extends Subsystems {
     }
 
 
-    private Climber(){
-      leftClimber = new TalonFX(Constants.CLIMBER_TALON_LEFT); 
-      rightClimber = new TalonFX(Constants.CLIMBER_TALON_RIGHT);
-      ratchetSolenoid = new Solenoid(Constants.CLIMBER_RATCHET_SOLENOID);
+    public Climber(){
+      leftClimber = new TalonFX(Constants.leftClimber); 
+      rightClimber = new TalonFX(Constants.rightClimber);
+      cylinder = new Solenoid(Constants.CLIMBER_SOLENOID);
 
       leftClimber.setNeutralMode(NeutralMode.Brake);
       rightClimber.setNeutralMode(NeutralMode.Brake);
 
     }
 
-    public void climb(double power){
-        leftClimber.set(ControlMode.PercentOutput, power);
-        rightClimber.set(ControlMode.PercentOutput, power);
+    public void climb(double left, double right){
+        leftClimber.set(ControlMode.PercentOutput, left);
+        rightClimber.set(ControlMode.PercentOutput, right);
     }
 
-    public void engageRatchet(){
-        ratchetSolenoid.set(false);
+    public void compress(){
+        cylinder.set(true);
     }
 
-    public void disengageRatchet(){
-        ratchetSolenoid.set(true);
+    public void decompress(){
+        cylinder.set(false);
     }
     
     
