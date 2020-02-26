@@ -66,29 +66,12 @@ public class TeleOp {
         if (driver.getLeftBumper()) {
             if (Limelight.getTv() == 1) {
                 Limelight.ledsOn();
-           
 
                 dt.setAngle(dt.getAHRS() + Limelight.getTx());
                 dt.targetedDrive(Utils.expodeadZone(-driver.getRightStickYAxis())); // allows driver to move back and forth during lineup
 
-
-                if(distance() >= 47.7 && distance() <= 79.5){
-
-                    shooter.hoodPosition(Utils.autoFormula(47.7, 79.5, -0.7, -0.5));
-                }
-                else if(distance() >= 79.5 && distance() <= 116.5){
-                    shooter.hoodPosition(Utils.autoFormula(79.5, 116.5, -0.5, -0.3));
-                }
-                else if(distance() >= 116.5 && distance() <= 145.65){
-                    shooter.hoodPosition(Utils.autoFormula(116.5, 145.65, -0.3, -0.45));
-                }
-                else{
-                    shooter.hoodPosition(Constants.LAYUP_POSITION);
-                }
-
-                
-               
-
+                shooter.autoHoodPosition(distance());
+             
             } else {
                 //shooter.hoodPosition(Constants.LAYUP_POSITION);
                 Limelight.ledsFlash();
@@ -105,23 +88,21 @@ public class TeleOp {
 
         if(Utils.expodeadZone(driver.getRightTriggerAxis()) > 0){
             if(driver.getRightTriggerAxis() > 0.3){
-                climber.compress();
+                climber.disengageRatchet();
             }
             else{
-                climber.decompress();
+                climber.engageRatchet();
             }
-            
-            
-            
-            climber.climb(Utils.expodeadZone(-driver.getRightTriggerAxis()), Utils.expodeadZone(-driver.getRightTriggerAxis()));
+                        
+            climber.climb(Utils.expodeadZone(-driver.getRightTriggerAxis()));
         }
         else if(Utils.expodeadZone(driver.getLeftTriggerAxis()) > 0){
-            climber.compress();
-            climber.climb(Utils.expodeadZone(driver.getLeftTriggerAxis()), Utils.expodeadZone(driver.getLeftTriggerAxis()));
+            climber.disengageRatchet();
+            climber.climb(Utils.expodeadZone(driver.getLeftTriggerAxis()));
         }
         else{
-            climber.decompress();
-            climber.climb(0, 0);
+            climber.engageRatchet();
+            climber.climb(0);
         }
         
         if (driver.getRightBumper()) {
@@ -151,24 +132,8 @@ public class TeleOp {
         if (manip.getRightTriggerButton()) {
             Limelight.ledsOn();
             
-            
-            if(distance() >= 47.7 && distance() <= 79.5){
-
-                shooter.launch(Utils.autoFormula(47.7, 79.5, 4400, 5000) * (50.0/15));
-            }
-            else if(distance() >= 79.5 && distance() <= 116.5){
-                shooter.launch(Utils.autoFormula(79.5, 116.5, 5000, 6000) * (50.0/15));
-            }
-            else if(distance() >= 116.5 && distance() <= 145.65){
-                shooter.launch(Utils.autoFormula(116.5, 145.65, 6000, 6200) * (50.0/15));
-            }
-            else{
-                shooter.launch(Constants.LAYUP_SPEED * (50.0/15));
-            }
-
-            
-            
-
+            shooter.autoLaunchSpeed(distance());
+         
             if(manip.getLeftStickYAxis() < -0.2){
                 intake.beltMove(0.7);                   
             }
@@ -193,7 +158,7 @@ public class TeleOp {
         else if (manip.getYButton()) {
             //layups / close range
             shooter.hoodPosition(Constants.LAYUP_POSITION);
-            shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
+            shooter.launchRPM(Constants.LAYUP_SPEED);
             if(Utils.expodeadZone(manip.getLeftStickYAxis()) < -0.1){
                 intake.beltMove(0.4);
 
@@ -242,7 +207,7 @@ public class TeleOp {
     public static void smartDashboard() {
 
 
-        SmartDashboard.putNumber("MotorSpeed", dt.getSpeed());
+        SmartDashboard.putNumber("MotorSpeed", dt.getPercentOutput());
 
         //SmartDashboard.putNumber("Gyro #", dt.getAHRS());
 
@@ -265,17 +230,17 @@ public class TeleOp {
 
     public static String highSensorState() {
 
-        if (previousSensorValue == false && intake.getHighSensor() == true) {
+        if (previousSensorValue == false && intake.getLowBeltSensor() == true) {
             System.out.println("new ball in");
             return "new ball in";
         }
 
-        if (previousSensorValue == false && intake.getHighSensor() == false) {
+        if (previousSensorValue == false && intake.getLowBeltSensor() == false) {
             return "no ball in";
 
         }
 
-        previousSensorValue = intake.getHighSensor();
+        previousSensorValue = intake.getLowBeltSensor();
 
         return "same ball in";
 

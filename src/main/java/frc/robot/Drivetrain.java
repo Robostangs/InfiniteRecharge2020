@@ -38,11 +38,13 @@ public class Drivetrain extends Subsystems {
     private Drivetrain() {
 
         rightFront = new CANSparkMax(Constants.TALON_RIGHTFRONT, MotorType.kBrushless);
+        rightMiddle = new CANSparkMax(Constants.TALON_RIGHTMIDDLE, MotorType.kBrushless);
+        rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
+
         leftFront = new CANSparkMax(Constants.TALON_LEFTFRONT, MotorType.kBrushless);
         leftBack = new CANSparkMax(Constants.TALON_LEFTBACK, MotorType.kBrushless);
-        rightBack = new CANSparkMax(Constants.TALON_RIGHTBACK, MotorType.kBrushless);
         leftMiddle = new CANSparkMax(Constants.TALON_LEFTMIDDLE, MotorType.kBrushless);
-        rightMiddle = new CANSparkMax(Constants.TALON_RIGHTMIDDLE, MotorType.kBrushless);
+        
 
         encoderLeftFront = leftFront.getEncoder();
         encoderRightFront = rightFront.getEncoder();
@@ -126,7 +128,7 @@ public class Drivetrain extends Subsystems {
         pidControllerRightFront.setOutputRange(-cap, cap,2);
     }
 
-    public double getSpeed(){
+    public double getPercentOutput(){
         return leftFront.getAppliedOutput();
     }
 
