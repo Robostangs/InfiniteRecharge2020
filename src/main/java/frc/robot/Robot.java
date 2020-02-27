@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.AutoModes.AutoMode;
-import frc.AutoModes.DriveStraight;
 import frc.AutoModes.ShootfromInit;
 import frc.RobotTests.Drivetraintester;
 import frc.RobotTests.IntakeTester;
@@ -159,6 +158,8 @@ public class Robot extends TimedRobot {
       System.out.println("------------------------------");
     }
 
+    
+
     Music.loadMusicSelection(new TalonFX(Constants.SHOOTER_TALON_LEFT), new TalonFX(Constants.SHOOTER_TALON_RIGHT), new TalonFX(Constants.leftClimber), new TalonFX(Constants.rightClimber), "low_rider.chrp");
     
   }
@@ -167,14 +168,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    //play low rider if test suceeds and change LEDS to green
-    if(ShooterTester.allMotorsFunctional() && IntakeTester.allMotorsFunctional() && Drivetraintester.allMotorsFunctional()){
+    //play low rider if test suceeds and finishes, then change LEDS to green
+
+  
+    if(ShooterTester.allMotorsFunctional() == true && IntakeTester.allMotorsFunctional() == true && Drivetraintester.areAllMotorsFunctional()  == true && Drivetraintester.isTestFinished() == true && IntakeTester.isTestFinished() == true && ShooterTester.isTestFinished() == true) {
       LEDs.setColor(0.77);
       Music.play();
     }
     //leds keep flashing red and erros display
     else{
       LEDs.setColor(0.61);
+      Music.play(); //test
     }
+    
+
+    Music.play();
+
   }
 }

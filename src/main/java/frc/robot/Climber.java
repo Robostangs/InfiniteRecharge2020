@@ -34,11 +34,11 @@ public class Climber extends Subsystems {
         rightClimber.set(ControlMode.PercentOutput, right);
     }
 
-    public void compress(){
+    public void disengageRatchet(){ //formerly compress
         cylinder.set(true);
     }
 
-    public void decompress(){
+    public void engageRatchet(){
         cylinder.set(false);
     }
     

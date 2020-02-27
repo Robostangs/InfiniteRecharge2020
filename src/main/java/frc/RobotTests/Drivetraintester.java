@@ -12,13 +12,15 @@ import frc.robot.Drivetrain;
 public class Drivetraintester {
 
     private static Drivetrain dt = Drivetrain.getInstance();
+    private static boolean allMotorsFunctional = true;
+    private static boolean testFinished = false;
 
     public static void dtTester(CANSparkMax leftFront, CANSparkMax leftMiddle, CANSparkMax leftBack, CANSparkMax rightFront, CANSparkMax rightMiddle, CANSparkMax rightBack)
     {
 
         
         List<CANSparkMax> motors = new ArrayList<CANSparkMax>();
-        boolean allMotorsFunctional = true;
+        
 
         motors.add(leftFront);
         motors.add(leftMiddle);
@@ -74,6 +76,8 @@ public class Drivetraintester {
         Timer.delay(15);
 
        dt.stop();
+       
+       testFinished = true;
 
     }
 
@@ -82,13 +86,15 @@ public class Drivetraintester {
 
 
 
-    public static boolean allMotorsFunctional(){
-        return allMotorsFunctional();
+    public static boolean areAllMotorsFunctional(){
+        return allMotorsFunctional;
     }
 
 
 
-
+    public static boolean isTestFinished(){
+        return testFinished;
+    }
 
     
 }

@@ -72,20 +72,7 @@ public class TeleOp {
                 dt.targetedDrive(Utils.expodeadZone(-driver.getRightStickYAxis())); // allows driver to move back and forth during lineup
 
 
-                if(distance() >= 47.7 && distance() <= 79.5){
-
-                    shooter.hoodPosition(Utils.autoFormula(47.7, 79.5, -0.7, -0.5));
-                }
-                else if(distance() >= 79.5 && distance() <= 116.5){
-                    shooter.hoodPosition(Utils.autoFormula(79.5, 116.5, -0.5, -0.3));
-                }
-                else if(distance() >= 116.5 && distance() <= 145.65){
-                    shooter.hoodPosition(Utils.autoFormula(116.5, 145.65, -0.3, -0.45));
-                }
-                else{
-                    shooter.hoodPosition(Constants.LAYUP_POSITION);
-                }
-
+                shooter.hoodPosition(Utils.autoHood());
                 
                
 
@@ -96,6 +83,13 @@ public class TeleOp {
                 dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
             }
         } else {
+
+            if(manip.getRightTriggerButton() == false)
+            {
+                shooter.hoodPosition(Constants.LAYUP_POSITION);
+            }
+
+
             Limelight.ledsOff();
             //dt.pidDisable();
             dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
@@ -105,10 +99,10 @@ public class TeleOp {
 
         if(Utils.expodeadZone(driver.getRightTriggerAxis()) > 0){
             if(driver.getRightTriggerAxis() > 0.3){
-                climber.compress();
+                climber.disengageRatchet();
             }
             else{
-                climber.decompress();
+                climber.engageRatchet();
             }
             
             
@@ -116,11 +110,11 @@ public class TeleOp {
             climber.climb(Utils.expodeadZone(-driver.getRightTriggerAxis()), Utils.expodeadZone(-driver.getRightTriggerAxis()));
         }
         else if(Utils.expodeadZone(driver.getLeftTriggerAxis()) > 0){
-            climber.compress();
+            climber.disengageRatchet();
             climber.climb(Utils.expodeadZone(driver.getLeftTriggerAxis()), Utils.expodeadZone(driver.getLeftTriggerAxis()));
         }
         else{
-            climber.decompress();
+            climber.engageRatchet();
             climber.climb(0, 0);
         }
         
@@ -151,22 +145,9 @@ public class TeleOp {
         if (manip.getRightTriggerButton()) {
             Limelight.ledsOn();
             
-            
-            if(distance() >= 47.7 && distance() <= 79.5){
+            shooter.launch(Utils.autoPower());
 
-                shooter.launch(Utils.autoFormula(47.7, 79.5, 4400, 5000) * (50.0/15));
-            }
-            else if(distance() >= 79.5 && distance() <= 116.5){
-                shooter.launch(Utils.autoFormula(79.5, 116.5, 5000, 6000) * (50.0/15));
-            }
-            else if(distance() >= 116.5 && distance() <= 145.65){
-                shooter.launch(Utils.autoFormula(116.5, 145.65, 6000, 6200) * (50.0/15));
-            }
-            else{
-                shooter.launch(Constants.LAYUP_SPEED * (50.0/15));
-            }
-
-            
+            shooter.hoodPosition(Utils.autoHood());
             
 
             if(manip.getLeftStickYAxis() < -0.2){
@@ -281,9 +262,6 @@ public class TeleOp {
 
     }
 
-    private static double distance(){
-        return Utils.dist(Limelight.getTx(), Limelight.getTy());
-    }
 
     
 }

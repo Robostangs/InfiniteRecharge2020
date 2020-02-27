@@ -13,14 +13,15 @@ public class IntakeTester {
 
     private static Intake IT = Intake.getInstance();
     private static boolean allMotorsFunctional = true;
+    private static boolean testFinished;
+
 
     public static void itTester(TalonSRX belt, TalonSRX ingestor)
     {
 
         
         List<TalonSRX> motors = new ArrayList<TalonSRX>();
-        
-
+       
         motors.add(belt);
         motors.add(ingestor);
         
@@ -73,11 +74,17 @@ public class IntakeTester {
         IT.stop();
 
         
+        testFinished = true;
     }
 
     public static boolean allMotorsFunctional(){
         return allMotorsFunctional;
     }
+
+    public static boolean isTestFinished(){
+        return testFinished;
+    }
+    
 
 
 

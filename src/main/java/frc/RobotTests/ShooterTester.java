@@ -12,6 +12,7 @@ public class ShooterTester {
 
     private static Shooter shooter = Shooter.getInstance();
     private static boolean allMotorsFunctional = true;
+    private static boolean testFinished = false;
     public static ArrayList<TalonFX> motors = new ArrayList<TalonFX>();
 
     public ShooterTester(){
@@ -68,6 +69,8 @@ public class ShooterTester {
 
         
 
+        testFinished = true;
+
 
     }
 
@@ -77,7 +80,9 @@ public class ShooterTester {
     }
 
 
-
+    public static boolean isTestFinished(){
+        return testFinished;
+    }
 
 
 
