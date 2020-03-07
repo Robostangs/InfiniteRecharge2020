@@ -45,6 +45,7 @@ public class Shooter extends Subsystems{
         
         //resets before setting configs
         launcherLeft.configFactoryDefault();
+        launcherRight.configFactoryDefault();
 
         //sets the feedback device (encoder) and type of loop (controlled)
         launcherLeft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -77,9 +78,9 @@ public class Shooter extends Subsystems{
         launcherRight.follow(launcherLeft);
     }
 
-    public  void launchNoPID(double leftSpeed, double rightSpeed) // percent output
+    public  void launchNoPID(double speed) // percent output
     {
-        launcherLeft.set(ControlMode.PercentOutput, leftSpeed);
+        launcherLeft.set(ControlMode.PercentOutput, speed);
         launcherRight.follow(launcherLeft);
     }
 

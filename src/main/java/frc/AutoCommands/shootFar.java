@@ -1,6 +1,7 @@
 package frc.AutoCommands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Intake;
 import frc.robot.Limelight;
 import frc.robot.Shooter;
@@ -36,10 +37,11 @@ public class shootFar extends AutoCommandBase {
         Limelight.ledsOn();
 
         shooter.hoodPosition(Utils.autoHood());
-        shooter.launch(Utils.autoPower());
+        shooter.launch(Utils.autoPower() - 550);
 
+       
 
-        Timer.delay(2);
+        Timer.delay(3);
 
         intake.beltMove(beltSpeed);
         

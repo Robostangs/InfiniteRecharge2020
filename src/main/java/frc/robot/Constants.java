@@ -22,7 +22,7 @@ public class Constants
 	public static final double LAYUP_POSITION = -1;
 	public static final double LAYUP_SPEED = 5000;
 
-	public static final int TARGET_HEIGHT = 56;
+	public static final int TARGET_HEIGHT = 55;
 	public static final double LIMELIGHT_ANGLE = 39.14;
 
 	public static final int TALON_LEFTBACK = 15;
@@ -46,7 +46,7 @@ public class Constants
 	public static final double kD2 = 0;
 	public static final int kIz2 = 0;
 
-	public static final double GYROkP = 0.01;
+	public static final double GYROkP = 0.02;
 	public static final double GYROkI = 0;
 	public static final double GYROkD = 0.0015;
 
@@ -57,17 +57,17 @@ public class Constants
 	public static final double DTMAX_AUTO_SPEED = 0.28;
 
 	//motor checks
-	public static final double MOTOR_ACCEPTED_MAX_CURRENT = 0; //at 80% power
-	public static final double MOTOR_ACCEPTED_MIN_CURRENT = 0;
+	public static final double DT_ACCEPTED_MAX_CURRENT = 0; //at 80% power
+	public static final double DT_ACCEPTED_MIN_CURRENT = 0;
 	
-	public static final double MOTOR_ACCEPTED_MAX_VELOCITY = 0;
-	public static final double MOTOR_ACCEPTED_MIN_VELOCITY = 0;
+	public static final double DT_ACCEPTED_MAX_VELOCITY = 0;
+	public static final double DT_ACCEPTED_MIN_VELOCITY = 0;
 
-	public static final double LAUNCHER_ACCEPTED_MAX_CURRENT = 0; //at 75% power
-	public static final double LAUNCHER_ACCEPTED_MIN_CURRENT = 0; 
+	public static final double LAUNCHER_ACCEPTED_MAX_CURRENT = 5; //at 75% power
+	public static final double LAUNCHER_ACCEPTED_MIN_CURRENT = 2.5; 
 	
-	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 0; 
-	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 0; 
+	public static final int LAUNCHER_ACCEPTED_MIN_VELOCITY = 19000; 
+	public static final int LAUNCHER_ACCEPTED_MAX_VELOCITY = 22000; 
 
 	public static final int TALONSRX_ACCEPTED_MIN_VELOCITY = 0; //at 100% power
 	public static final int TALONSRX_ACCEPTED_MIN_CURRENT = 0;
@@ -93,11 +93,15 @@ public class Constants
 	public static final int leftClimber = 7;
 	public static final int rightClimber = 12;
 	public static final int CLIMBER_SOLENOID = 4;
+	public static final int CLIMBER_STOPPER = 0;
 
 	//sensor values
 	public static final int ULTRASONIC_LOW = 0;
 	public static final int COLOR_HIGH = 9;
 	public static final double BELT_BALL_MOVED = -6000;
+	public static final double ULTRASONIC_MIN = 0;
+
+
 	
 	
 

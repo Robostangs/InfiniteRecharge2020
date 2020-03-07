@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -23,6 +24,7 @@ public class Drivetrain extends Subsystems {
     public boolean isPidEnabled = false;
     private PIDController gyropid;
     private Solenoid shifter;
+    private Compressor airBoi;
 
     public double prevTime;
     public double prevError;
@@ -50,6 +52,7 @@ public class Drivetrain extends Subsystems {
         pidControllerLeftFront = leftFront.getPIDController();
         pidControllerRightFront = rightFront.getPIDController();
         shifter = new Solenoid(Constants.SOLENOID_SHIFTER);
+        airBoi = new Compressor(0);
 
         gyro = new AHRS(SPI.Port.kMXP);
         gyropid = new PIDController(1, 0, 0);
@@ -129,6 +132,14 @@ public class Drivetrain extends Subsystems {
     public double getSpeed(){
         return leftFront.getAppliedOutput();
     }
+    
+    public void compressorOn(){
+        airBoi.start();
+    }
+
+    public void compressorOff(){
+        airBoi.stop();
+    }
 
     public void highGear() {
         shifter.set(true);
@@ -190,7 +201,7 @@ public class Drivetrain extends Subsystems {
         }
         double changeError = error-prevError;
         
-        return (Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint));
+        return ((Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint)))*(1.0/3.0);
 
         //return (SmartDashboard.getNumber("Gyro kD",0)*(changeError/timeChange))+(SmartDashboard.getNumber("Gyro kP", 0)*(error-setPoint));
         

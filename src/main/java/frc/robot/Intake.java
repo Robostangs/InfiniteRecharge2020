@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -43,6 +44,14 @@ public class Intake extends Subsystems {
 
     public void ingest(double power) {
         ingestor.set(ControlMode.PercentOutput, power);
+    }
+
+    public void setFeederBrake(){
+        belt.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public void setFeederCoast(){
+        belt.setNeutralMode(NeutralMode.Coast);
     }
 
     public void beltMove(double power) {

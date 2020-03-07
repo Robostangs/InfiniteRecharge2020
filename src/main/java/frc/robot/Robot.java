@@ -60,6 +60,8 @@ public class Robot extends TimedRobot {
     Limelight.getInstance();
     Limelight.ledsOff();
     
+
+
         
 
   }
@@ -100,12 +102,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-      
+    
   }
 
 
   @Override
   public void teleopInit() {
+    
+    SmartDashboard.putNumber("Jeff", 0);
+    SmartDashboard.putNumber("Hood Position", 0);
 
     SmartDashboard.putNumber("Gyro kP", 0);
     SmartDashboard.putNumber("Gyro kI", 0);
@@ -151,14 +156,17 @@ public class Robot extends TimedRobot {
     System.out.println("----------------------------");
 
     //iterate through each subsystem check
-    for (Subsystems sub : subsystems)
-    {
-      System.out.println();
-      sub.checkStart();
-      System.out.println("------------------------------");
-    }
 
-    
+      System.out.println();
+      dt.checkStart();
+      System.out.println("------------------------------");
+      System.out.println();
+      sh.checkStart();
+      System.out.println("------------------------------");
+      System.out.println();
+      it.checkStart();
+      System.out.println("------------------------------");
+       
 
     Music.loadMusicSelection(new TalonFX(Constants.SHOOTER_TALON_LEFT), new TalonFX(Constants.SHOOTER_TALON_RIGHT), new TalonFX(Constants.leftClimber), new TalonFX(Constants.rightClimber), "low_rider.chrp");
     
@@ -178,11 +186,6 @@ public class Robot extends TimedRobot {
     //leds keep flashing red and erros display
     else{
       LEDs.setColor(0.61);
-      Music.play(); //test
     }
-    
-
-    Music.play();
-
   }
 }

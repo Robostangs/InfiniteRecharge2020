@@ -4,12 +4,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber extends Subsystems {
     public static Climber instance;
-    public TalonFX leftClimber , rightClimber;
+    public TalonFX leftClimber, rightClimber;
     public Solenoid cylinder;
+    public DigitalInput stopper;
 
     public static Climber getInstance() {
         
@@ -27,6 +29,8 @@ public class Climber extends Subsystems {
       leftClimber.setNeutralMode(NeutralMode.Brake);
       rightClimber.setNeutralMode(NeutralMode.Brake);
 
+      stopper = new DigitalInput(Constants.CLIMBER_STOPPER);
+
     }
 
     public void climb(double left, double right){
@@ -41,7 +45,12 @@ public class Climber extends Subsystems {
     public void engageRatchet(){
         cylinder.set(false);
     }
+
+    public boolean getStopper(){
+        return stopper.get();
+    }
     
+
     
 
 

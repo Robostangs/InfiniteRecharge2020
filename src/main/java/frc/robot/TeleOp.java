@@ -46,6 +46,7 @@ public class TeleOp {
         smartDashboard();
 
 
+
         Limelight.refresh();
 
         //PID VALUES
@@ -72,12 +73,14 @@ public class TeleOp {
                 dt.targetedDrive(Utils.expodeadZone(-driver.getRightStickYAxis())); // allows driver to move back and forth during lineup
 
 
-                shooter.hoodPosition(Utils.autoHood());
+                if(manip.getYButton() == false){
+                    //shooter.hoodPosition(Utils.autoHood());
+                }
+           
                 
                
 
             } else {
-                //shooter.hoodPosition(Constants.LAYUP_POSITION);
                 Limelight.ledsFlash();
                 //dt.pidDisable();
                 dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
@@ -86,7 +89,7 @@ public class TeleOp {
 
             if(manip.getRightTriggerButton() == false)
             {
-                shooter.hoodPosition(Constants.LAYUP_POSITION);
+                //shooter.hoodPosition(Constants.LAYUP_POSITION);
             }
 
 
@@ -96,8 +99,9 @@ public class TeleOp {
         }
 
 
+        //Climber
+        if(Utils.expodeadZone(driver.getRightTriggerAxis()) > 0 && climber.getStopper() == true){
 
-        if(Utils.expodeadZone(driver.getRightTriggerAxis()) > 0){
             if(driver.getRightTriggerAxis() > 0.3){
                 climber.disengageRatchet();
             }
@@ -117,6 +121,8 @@ public class TeleOp {
             climber.engageRatchet();
             climber.climb(0, 0);
         }
+
+        
         
         if (driver.getRightBumper()) {
             dt.highGear();
@@ -138,16 +144,22 @@ public class TeleOp {
             LEDs.setColor(-0.99);
         }
 
-
-     
+//change after testing
+        shooter.hoodPosition(SmartDashboard.getNumber("Hood Position", 0));
 
         // Shooter
         if (manip.getRightTriggerButton()) {
-            Limelight.ledsOn();
-            
-            shooter.launch(Utils.autoPower());
+            dt.compressorOff();
 
-            shooter.hoodPosition(Utils.autoHood());
+            Limelight.ledsOn();
+
+//change after testing     
+            shooter.launch(SmartDashboard.getNumber("Jeff", 0) * (50.0/15.0));
+            
+
+            //shooter.launch(Utils.autoPower());
+
+            //shooter.hoodPosition(Utils.autoHood());
             
 
             if(manip.getLeftStickYAxis() < -0.2){
@@ -172,11 +184,12 @@ public class TeleOp {
 
         } 
         else if (manip.getYButton()) {
+            dt.compressorOff();
             //layups / close range
             shooter.hoodPosition(Constants.LAYUP_POSITION);
             shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
             if(Utils.expodeadZone(manip.getLeftStickYAxis()) < -0.1){
-                intake.beltMove(0.4);
+                intake.beltMove(1.0);
 
             }
             else{
@@ -184,21 +197,22 @@ public class TeleOp {
             }
         } else {
            
-        
-
-            
-
+            dt.compressorOn();
             // automatic belt
-            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true) {
+            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true && intake.getLowSensor() > Constants.ULTRASONIC_MIN) {
                 intake.resetBeltEncoder();
                 LEDs.setColor(-0.29); // blue light chase
-                intake.beltMove(0.2);
-                shooter.launchNoPID(0.3, 0.3);
+                intake.beltMove(0.5);
+                shooter.launchNoPID(0.3);
 
             } else {
-                shooter.launchNoPID(0, 0);
+                shooter.launchNoPID(0);
                 if (intake.getBeltEncoder() < Constants.BELT_BALL_MOVED && manip.getRightTriggerButton() != true) {
+                    intake.setFeederBrake();
                     intake.beltMove(0);
+                }
+                else{
+                    intake.setFeederCoast();
                 }
 
             }
@@ -223,7 +237,9 @@ public class TeleOp {
     public static void smartDashboard() {
 
 
-        SmartDashboard.putNumber("MotorSpeed", dt.getSpeed());
+
+        SmartDashboard.putNumber("Ultrasonic", intake.getLowSensor());
+
 
         //SmartDashboard.putNumber("Gyro #", dt.getAHRS());
 

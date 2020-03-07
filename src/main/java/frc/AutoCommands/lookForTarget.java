@@ -3,6 +3,7 @@ package frc.AutoCommands;
 import frc.robot.Drivetrain;
 import frc.robot.Limelight;
 import frc.robot.Shooter;
+import frc.robot.Utils;
 
 
 public class lookForTarget extends AutoCommandBase{
@@ -30,12 +31,14 @@ public class lookForTarget extends AutoCommandBase{
 
     @Override
     public void init(){
+
         shooter.hoodPosition(actPosition);
     }
 
     @Override
     protected void run(){
-        shooter.launch(shootPower*(15/50));
+
+
         Limelight.refresh();
         if(Limelight.getTv() == 1){
             Limelight.ledsOn();
