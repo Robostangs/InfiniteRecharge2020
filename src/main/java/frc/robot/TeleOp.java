@@ -199,7 +199,7 @@ public class TeleOp {
            
             dt.compressorOn();
             // automatic belt
-            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true && intake.getLowSensor() > Constants.ULTRASONIC_MIN) {
+            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true && intake.getLowSensor() == false) {
                 intake.resetBeltEncoder();
                 LEDs.setColor(-0.29); // blue light chase
                 intake.beltMove(0.5);
@@ -238,7 +238,6 @@ public class TeleOp {
 
 
 
-        SmartDashboard.putNumber("Ultrasonic", intake.getLowSensor());
 
 
         //SmartDashboard.putNumber("Gyro #", dt.getAHRS());
