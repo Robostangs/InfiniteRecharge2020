@@ -20,6 +20,7 @@ public class Drivetrain extends Subsystems {
     public CANSparkMax rightFront, leftFront, leftBack, rightBack, leftMiddle, rightMiddle;
     private CANEncoder encoderLeftFront, encoderRightFront;
     CANPIDController pidControllerLeftFront, pidControllerRightFront;
+    public double realGyro;
     private AHRS gyro;
     public boolean isPidEnabled = false;
     private PIDController gyropid;
@@ -52,18 +53,12 @@ public class Drivetrain extends Subsystems {
         pidControllerLeftFront = leftFront.getPIDController();
         pidControllerRightFront = rightFront.getPIDController();
         shifter = new Solenoid(Constants.SOLENOID_SHIFTER);
-        airBoi = new Compressor(0);
+        airBoi = new Compressor(0); //This is so the compressor stops when shooting so that we don't lose battery   (named by dan)
 
         gyro = new AHRS(SPI.Port.kMXP);
-        gyropid = new PIDController(1, 0, 0);
+   
 
-        gyropid.enableContinuousInput(-180, 180);
-        gyropid.setTolerance(1d);
-
-        gyropid.setP(Constants.GYROkP);
-        gyropid.setI(Constants.GYROkI);
-        gyropid.setD(Constants.GYROkD);
-
+        //set all PID values
         /******************************************************* */
         // Slot 1
         pidControllerRightFront.setP(Constants.kP, 1);
@@ -153,6 +148,14 @@ public class Drivetrain extends Subsystems {
         return gyro.getAngle();
     }
 
+    public void setRealGyro(double angle){
+        realGyro = angle;
+    }
+
+    public double getRealAngle(){
+        return realGyro;
+    }
+
     public double getEncoderRight() {
         return encoderRightFront.getPosition();
     }
@@ -174,18 +177,29 @@ public class Drivetrain extends Subsystems {
         encoderRightFront.setPosition(0);
     }
 
+    public void resetGyro(){
+        gyro.reset();
+    }
+
     // PID / auto
     public void setAngle(double angle) {
+        //sets the PID setpoint but does not actually enable PID driving
         setPoint = angle;
 
     }
 
     public void targetedDrive(double power) {
+        //pidCalculate is the rotational power of the robot, lines it up at a certain angle
         arcadeDrive(power, pidCalculate(getAHRS()));
     }
 
     public void AutoTargetedDrive(double power) {
-        arcadeDrive(power, autoPidCalculate(getAHRS()));
+        //slightly slower than targetedDrive
+        arcadeDrive(power, autoPidCalculate(getAHRS()) / 1.1);
+    }
+
+    public void resetAHRS(){
+        gyro.reset();
     }
 
     public void feedValues(){
@@ -201,6 +215,7 @@ public class Drivetrain extends Subsystems {
         }
         double changeError = error-prevError;
         
+        //manual PID (NOTE: "setPoint" is the angle we are setting the drivetrain to! Refer to "setAngle")
         return ((Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint)))*(1.0/3.0);
 
         //return (SmartDashboard.getNumber("Gyro kD",0)*(changeError/timeChange))+(SmartDashboard.getNumber("Gyro kP", 0)*(error-setPoint));
@@ -208,12 +223,14 @@ public class Drivetrain extends Subsystems {
     }
 
     public double autoPidCalculate(double error){
+        //for autos, if needed
         double timeChange = (System.nanoTime()/1000000000.0)-prevTime;
         if(timeChange == 0){
             timeChange = 100;
         }
         double changeError = error-prevError;
         
+        //manual PID
         return ((Constants.GYROkD*(changeError/timeChange))+(Constants.GYROkP*(error-setPoint)))*(1.0/3.0);
 
         //return (SmartDashboard.getNumber("Gyro kD",0)*(changeError/timeChange))+(SmartDashboard.getNumber("Gyro kP", 0)*(error-setPoint));
@@ -249,19 +266,6 @@ public class Drivetrain extends Subsystems {
     public void setkP(double kP) {
         pidControllerLeftFront.setP(kP);
         pidControllerRightFront.setP(kP);
-    }
-
-    // gyro PID
-    public void setgkP(double gkP) {
-        gyropid.setP(gkP);
-    }
-
-    public void setgkI(double gkI) {
-        gyropid.setI(gkI);
-    }
-
-    public void setgkD(double gkD) {
-        gyropid.setD(gkD);
     }
 
     // pid slot 2

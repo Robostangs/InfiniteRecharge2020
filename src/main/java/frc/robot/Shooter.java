@@ -1,12 +1,11 @@
 package frc.robot;
 
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Solenoid;
 import frc.RobotTests.ShooterTester;
 
 
@@ -19,7 +18,7 @@ public class Shooter extends Subsystems{
     public static Shooter instance;
     private  TalonFX launcherLeft, launcherRight;
     private  TalonSRX elevator;
-    private  Servo servoLeft, servoRight;
+    private  Solenoid hood;
  
     
     public static Shooter getInstance(){
@@ -34,10 +33,7 @@ public class Shooter extends Subsystems{
 
         elevator = new TalonSRX(Constants.ELEVATOR_TALON);
 
-        servoLeft = new Servo(Constants.LINEAR_ACTUATOR_LEFT);
-        servoLeft.setBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
-        servoRight = new Servo(Constants.LINEAR_ACTUATOR_RIGHT);
-        servoRight.setBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
+        hood = new Solenoid(Constants.SOLENOID_HOOD);
 
     
         
@@ -72,7 +68,7 @@ public class Shooter extends Subsystems{
         
     }
 
-    public  void launch(double speed)
+    public  void launch(double speed)   //launches with pid
     {
         launcherLeft.set(ControlMode.Velocity, speed);
         launcherRight.follow(launcherLeft);
@@ -82,11 +78,6 @@ public class Shooter extends Subsystems{
     {
         launcherLeft.set(ControlMode.PercentOutput, speed);
         launcherRight.follow(launcherLeft);
-    }
-
-    public  void pidDisable(double speed)
-    {
-        launcherLeft.set(ControlMode.PercentOutput, speed);
     }
 
     public  double getPercentOutput()
@@ -104,11 +95,14 @@ public class Shooter extends Subsystems{
         return elevator.getMotorOutputPercent();
     }
 
-    //value between 0 and 1
-    public  void hoodPosition(double position)
+    public  void hoodBack() //controlled by solenoid
     {
-        servoLeft.setSpeed(position);
-        servoRight.setSpeed(position);
+        hood.set(false);
+    }
+
+    public void hoodForward()
+    {
+        hood.set(true);
     }
 
 
@@ -129,7 +123,7 @@ public class Shooter extends Subsystems{
     }
 
     public  double getVelo(){
-        return launcherLeft.getSelectedSensorVelocity();
+        return launcherLeft.getSelectedSensorVelocity() * 2;
     }
 
     public  double getVeloRight(){

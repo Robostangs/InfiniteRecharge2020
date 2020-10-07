@@ -14,10 +14,12 @@ public class TeleOp {
     public static TeleOp instance;
 
     private static boolean previousSensorValue;
+    private static boolean previousLowSensorValue;
+
+    private static boolean movingDown;
 
     // led checks
     public static boolean elevLEDS;
-    public static boolean shooterLEDS;
     public static boolean shootingLEDS;
 
     public static TeleOp getInstance() {
@@ -32,12 +34,10 @@ public class TeleOp {
 
         // shooter defaults
 
-        elevLEDS = false;
-        shooterLEDS = false;
-        shootingLEDS = false;
-
 
         previousSensorValue = false;
+
+        movingDown = false;
 
     }
 
@@ -55,11 +55,6 @@ public class TeleOp {
         shooter.setkD(Constants.SHOOTER_kD);
         shooter.setkF(Constants.SHOOTER_FEED_FWD);
 
-        //should already work, just in case
-        dt.setgkP(Constants.GYROkP);
-        dt.setgkI(Constants.GYROkI);
-        dt.setgkD(Constants.GYROkD);
-
 
 
         /* DRIVER CONTROLS */
@@ -74,7 +69,7 @@ public class TeleOp {
 
 
                 if(manip.getYButton() == false){
-                    //shooter.hoodPosition(Utils.autoHood());
+                    shooter.hoodForward();
                 }
            
                 
@@ -89,7 +84,7 @@ public class TeleOp {
 
             if(manip.getRightTriggerButton() == false)
             {
-                //shooter.hoodPosition(Constants.LAYUP_POSITION);
+                shooter.hoodBack();
             }
 
 
@@ -104,6 +99,7 @@ public class TeleOp {
 
             if(driver.getRightTriggerAxis() > 0.3){
                 climber.disengageRatchet();
+                LEDs.setColor(-0.29); //blue light chase
             }
             else{
                 climber.engageRatchet();
@@ -114,56 +110,34 @@ public class TeleOp {
             climber.climb(Utils.expodeadZone(-driver.getRightTriggerAxis()), Utils.expodeadZone(-driver.getRightTriggerAxis()));
         }
         else if(Utils.expodeadZone(driver.getLeftTriggerAxis()) > 0){
+            LEDs.setColor(-0.39);
             climber.disengageRatchet();
             climber.climb(Utils.expodeadZone(driver.getLeftTriggerAxis()), Utils.expodeadZone(driver.getLeftTriggerAxis()));
         }
         else{
+            LEDs.setColor(-0.39);
             climber.engageRatchet();
             climber.climb(0, 0);
         }
 
-        
-        
-        if (driver.getRightBumper()) {
-            dt.highGear();
-        } else {
-            dt.lowGear();
-        }
 
         /* MANIP CONTROLS */
-
-
-        // LEDS         *not implemented yet*
-        if (shooterLEDS == true) {
-            LEDs.setColor(0.65);
-        } else if (shootingLEDS == true) {
-            LEDs.setColor(0.63);
-        } else if (elevLEDS == true) {
-            LEDs.setColor(-0.81);
-        } else {
-            LEDs.setColor(-0.99);
-        }
-
-//change after testing
-        shooter.hoodPosition(SmartDashboard.getNumber("Hood Position", 0));
 
         // Shooter
         if (manip.getRightTriggerButton()) {
             dt.compressorOff();
 
+            shooter.hoodForward();
             Limelight.ledsOn();
 
-//change after testing     
-            shooter.launch(SmartDashboard.getNumber("Jeff", 0) * (50.0/15.0));
+            //change for testing     
+            //shooter.launchNoPID(SmartDashboard.getNumber("Jeff", 0));
             
 
-            //shooter.launch(Utils.autoPower());
-
-            //shooter.hoodPosition(Utils.autoHood());
-            
+            shooter.launch(Utils.autoPower());
 
             if(manip.getLeftStickYAxis() < -0.2){
-                intake.beltMove(0.7);                   
+                intake.beltMove(0.8);                   
             }
             else if(manip.getLeftStickYAxis() > 0.2){
                 intake.beltMove(-manip.getLeftStickYAxis());
@@ -185,9 +159,11 @@ public class TeleOp {
         } 
         else if (manip.getYButton()) {
             dt.compressorOff();
+            //shooter.launchNoPID(SmartDashboard.getNumber("Jeff", 0));
             //layups / close range
-            shooter.hoodPosition(Constants.LAYUP_POSITION);
+            shooter.hoodBack();
             shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
+
             if(Utils.expodeadZone(manip.getLeftStickYAxis()) < -0.1){
                 intake.beltMove(1.0);
 
@@ -195,19 +171,26 @@ public class TeleOp {
             else{
                 intake.beltMove(0);
             }
+
         } else {
+           
            
             dt.compressorOn();
             // automatic belt
-            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true && intake.getLowSensor() == false) {
+
+            if (highSensorState().equals("new ball in") && manip.getRightTriggerButton() != true && lowSensorState().equals("no ball in")) {
                 intake.resetBeltEncoder();
                 LEDs.setColor(-0.29); // blue light chase
-                intake.beltMove(0.5);
-                shooter.launchNoPID(0.3);
+                intake.beltMove(0.6);
+                shooter.launchNoPID(0.2);
 
-            } else {
+            }
+            else if(highSensorState().equals("no ball in") && lowSensorState().equals("same ball in")){
+                intake.beltMove(-0.2);
+            }
+             else {
                 shooter.launchNoPID(0);
-                if (intake.getBeltEncoder() < Constants.BELT_BALL_MOVED && manip.getRightTriggerButton() != true) {
+                if (intake.getBeltEncoder() < Constants.BELT_BALL_MOVED && manip.getRightTriggerButton() != true || lowSensorState().equals("new ball in") && manip.getRightTriggerButton() != true) {
                     intake.setFeederBrake();
                     intake.beltMove(0);
                 }
@@ -238,9 +221,9 @@ public class TeleOp {
 
 
 
+      
 
-
-        //SmartDashboard.putNumber("Gyro #", dt.getAHRS());
+        SmartDashboard.putNumber("Gyro #", dt.getAHRS());
 
 
         // drivetrain set values
@@ -259,6 +242,8 @@ public class TeleOp {
         SmartDashboard.putNumber("Velocity", (15.0 / 50.0) * shooter.getVelo());
     }
 
+
+    
     public static String highSensorState() {
 
         if (previousSensorValue == false && intake.getHighSensor() == true) {
@@ -272,10 +257,31 @@ public class TeleOp {
         }
 
         previousSensorValue = intake.getHighSensor();
+        previousLowSensorValue = intake.getLowSensor();
 
         return "same ball in";
 
     }
+
+        
+    public static String lowSensorState() {
+
+        if (previousLowSensorValue == false && intake.getLowSensor() == true) {
+            System.out.println("new ball in");
+            return "new ball in";
+        }
+
+        if (previousLowSensorValue == false && intake.getLowSensor() == false) {
+            return "no ball in";
+
+        }
+
+        previousLowSensorValue = intake.getLowSensor();
+
+        return "same ball in";
+
+    }
+
 
 
     

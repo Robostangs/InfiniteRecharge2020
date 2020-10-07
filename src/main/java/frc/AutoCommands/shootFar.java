@@ -1,8 +1,9 @@
 package frc.AutoCommands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Intake;
+import frc.robot.LEDs;
 import frc.robot.Limelight;
 import frc.robot.Shooter;
 import frc.robot.Utils;
@@ -12,6 +13,7 @@ public class shootFar extends AutoCommandBase {
     private Intake intake = Intake.getInstance();
 
     private double beltSpeed;
+
 	
 
 	public shootFar(double timeout, double beltSpeed){
@@ -32,12 +34,13 @@ public class shootFar extends AutoCommandBase {
 
     @Override
     protected void run() {
-        //move stopper down here ???
-        //move actuators
+
+   
+        
         Limelight.ledsOn();
 
-        shooter.hoodPosition(Utils.autoHood());
-        shooter.launch(Utils.autoPower() - 550);
+        shooter.hoodForward();
+        shooter.launch(Utils.autoPower());
 
        
 
@@ -57,5 +60,7 @@ public class shootFar extends AutoCommandBase {
 		// TODO Auto-generated method stub
 		return "shootFar";
     }
+
+
     
 }

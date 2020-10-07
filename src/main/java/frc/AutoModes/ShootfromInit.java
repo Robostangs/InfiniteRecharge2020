@@ -1,11 +1,15 @@
 package frc.AutoModes;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Drivetrain;
 import frc.robot.Shooter;
 
 public class ShootfromInit extends AutoMode {
 
     private Shooter shooter = Shooter.getInstance();
+    private Drivetrain drivetrain = Drivetrain.getInstance();
+    private static double gyroValue = 0;
+
    
     public ShootfromInit(){
         super();
@@ -16,25 +20,30 @@ public class ShootfromInit extends AutoMode {
 
 @Override
 protected void run() {
-    // TODO Auto-generated method stub
+    
     
     SmartDashboard.putNumber("velocity of shooter", shooter.getVelo());
     //robot points slightly to left, shotspeed and actuator value calculated automatically
-    lookForTarget(3, 0.1, true, 0, -0.5);
-
-    shootFar(6, 1);
-    
-    driveStraight(2, 32, false, 0, 0);
-    
+    lookForTarget(3, 0.2, false, 0, -0.5);
 
 
-    //ADDITIONAL CELLS IN FUTURE?
+   //testing shootFar(6, 1);
 
-    //switch pipelines
-    //lookForTarget
-    //Drivedistance + extra for intake 
-    //
+    turnToTarget(3.5, 0, 0, 180);
+
+
+
+    driveStraight(2, -32, true, -0.9, 0);
+
+    turnToTarget(3.5, 0, 0, 0);
+
+    lookForTarget(3, 0.1, false, 0, -0.5);
+
 	
+}
+
+public static double getGyro(){
+    return gyroValue;
 }
 
 

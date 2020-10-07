@@ -16,8 +16,7 @@ public class Constants
 	public static final int XBOX_DRIVER = 0;
 	public static final int XBOX_MANIP = 1;
 
-	public static final int LINEAR_ACTUATOR_RIGHT = 0;
-	public static final int LINEAR_ACTUATOR_LEFT = 1;
+	public static final int SOLENOID_HOOD = 3;
 
 	public static final double LAYUP_POSITION = -1;
 	public static final double LAYUP_SPEED = 5000;
@@ -96,10 +95,10 @@ public class Constants
 	public static final int CLIMBER_STOPPER = 0;
 
 	//sensor values
-	public static final int ULTRASONIC_LOW = 0;
 	public static final int COLOR_HIGH = 9;
-	public static final double BELT_BALL_MOVED = -6000;
-	public static final double ULTRASONIC_MIN = 0;
+	public static final double BELT_BALL_MOVED = -3500;		//encoder value belt moves up when ball is detected
+	public static final int COLOR_LOW = 8;
+	
 
 
 	

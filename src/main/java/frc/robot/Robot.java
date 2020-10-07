@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +37,8 @@ public class Robot extends TimedRobot {
   public static Intake it;
   public static TeleOp tp;
   public static AutoMode phillip;
-
+  public static PowerDistributionPanel pdp;
+  public double gyroStart;
   private List<Subsystems> subsystems = new ArrayList<Subsystems>();
 
 
@@ -59,11 +61,7 @@ public class Robot extends TimedRobot {
     tp = TeleOp.getInstance();
     Limelight.getInstance();
     Limelight.ledsOff();
-    
-
-
-        
-
+    pdp = new PowerDistributionPanel();
   }
 
   /**
@@ -76,6 +74,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    dt.setRealGyro(dt.getAHRS() - gyroStart);
+    SmartDashboard.putNumber("Gyro value", dt.getRealAngle());
+    SmartDashboard.putNumber("NAVX value", dt.getAHRS());
   }
 
   /**
@@ -91,9 +92,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    dt.resetAHRS();
     phillip = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + phillip.toString());
+    gyroStart = dt.getAHRS();
     phillip.start();
   }
 
@@ -102,7 +105,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    
+ 
   }
 
 

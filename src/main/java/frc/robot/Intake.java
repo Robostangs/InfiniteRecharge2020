@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class Intake extends Subsystems {
 
     public static Intake instance;
-    public AnalogInput lowSensor; //ultrasonic
+    public DigitalInput lowSensor; //actually high
     public DigitalInput highSensor; //color
     public TalonSRX belt;
     public Solenoid ingestorBar;
@@ -28,14 +28,14 @@ public class Intake extends Subsystems {
         belt = new TalonSRX(Constants.INTAKE_BELT);
         ingestorBar = new Solenoid(Constants.INTAKE_INGESTORBAR);
         ingestor = new TalonSRX(Constants.INTAKE_INGESTOR);
-        lowSensor = new AnalogInput(Constants.ULTRASONIC_LOW);
+        lowSensor = new DigitalInput(Constants.COLOR_LOW);
         highSensor = new DigitalInput(Constants.COLOR_HIGH);
         belt.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         
     }
 
-    public double getLowSensor(){
-        return lowSensor.getVoltage();
+    public boolean getLowSensor() {
+        return lowSensor.get();
     }
 
     public boolean getHighSensor() {

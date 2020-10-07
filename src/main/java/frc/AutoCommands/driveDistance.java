@@ -1,7 +1,10 @@
 package frc.AutoCommands;
 
+import frc.robot.Constants;
 import frc.robot.Drivetrain;
 import frc.robot.Intake;
+import frc.robot.LEDs;
+import frc.robot.Shooter;
 
 public class driveDistance extends AutoCommandBase {
     private double distance;
@@ -10,6 +13,8 @@ public class driveDistance extends AutoCommandBase {
     private double intakeSpeed;
     private Drivetrain drivetrain = Drivetrain.getInstance();
     private Intake intake = Intake.getInstance();
+    private Shooter shooter = Shooter.getInstance();
+    private boolean previousSensorValue;
 
 	
 
@@ -24,7 +29,7 @@ public class driveDistance extends AutoCommandBase {
 
         //convert time to distance when encoders finished
 
-		
+		previousSensorValue = false;
 
 
 	}
@@ -36,15 +41,30 @@ public class driveDistance extends AutoCommandBase {
 
     @Override
     protected void run(){ 
-        //this will full speed, find out some way to prevent this 
-        //while also allowing feet as the input
+
        intake.barDown(rollerDown);
        intake.beltMove(intakeSpeed);
        intake.ingest(rollerSpeed);
-       
-       
-          
 
+       
+       if (highSensorState().equals("new ball in")) {
+        intake.resetBeltEncoder();
+        LEDs.setColor(-0.29); // blue light chase
+        intake.beltMove(0.5);
+        shooter.launchNoPID(0.3);
+
+      } else {
+        shooter.launchNoPID(0);
+        if (intake.getBeltEncoder() < Constants.BELT_BALL_MOVED) {
+            intake.setFeederBrake();
+            intake.beltMove(0);
+        }
+        else{
+            intake.setFeederCoast();
+        }
+
+    }   
+       
     }
 
     @Override
@@ -56,4 +76,25 @@ public class driveDistance extends AutoCommandBase {
     protected String getCommandName() {
         return "Drive Distance";
     }
+
+
+    public String highSensorState() {
+
+        
+        if (previousSensorValue == false && intake.getHighSensor() == true) {
+            System.out.println("new ball in");
+            return "new ball in";
+        }
+
+        if (previousSensorValue == false && intake.getHighSensor() == false) {
+            return "no ball in";
+
+        }
+
+        previousSensorValue = intake.getHighSensor();
+
+        return "same ball in";
+
+    }
+
 }

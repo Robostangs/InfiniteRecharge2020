@@ -29,7 +29,8 @@ public class Limelight {
 
     public static void refresh(){
         nt = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = nt.getEntry("tx").getDouble(0) + 2.68;
+        tx = nt.getEntry("tx").getDouble(0) - 2
+        ;
         ty = nt.getEntry("ty").getDouble(0);
         tv = nt.getEntry("tv").getDouble(0);
         ta = nt.getEntry("ta").getDouble(0);

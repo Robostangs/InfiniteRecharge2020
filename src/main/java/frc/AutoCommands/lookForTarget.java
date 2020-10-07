@@ -32,7 +32,6 @@ public class lookForTarget extends AutoCommandBase{
     @Override
     public void init(){
 
-        shooter.hoodPosition(actPosition);
     }
 
     @Override
