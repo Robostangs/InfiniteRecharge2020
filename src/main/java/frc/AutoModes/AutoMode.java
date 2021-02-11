@@ -21,8 +21,8 @@ public abstract class AutoMode {
 	}
 	
     
-    protected void lookForTarget(double seconds, double power, boolean isLeft, double shootSpeed, double act){
-    	runCommand(new lookForTarget(seconds, power, isLeft, shootSpeed,act));
+    protected void lookForTarget(double seconds, double power, boolean isLeft, double shootSpeed){
+    	runCommand(new lookForTarget(seconds, power, isLeft, shootSpeed));
     }
     
    

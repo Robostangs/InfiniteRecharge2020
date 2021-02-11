@@ -69,7 +69,10 @@ public class driveDistance extends AutoCommandBase {
 
     @Override
     public void end(){
-        drivetrain.drive(0, 0);
+        drivetrain.stop();
+        intake.stop();
+        shooter.stop();
+
     }
 
     @Override

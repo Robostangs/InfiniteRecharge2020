@@ -46,7 +46,7 @@ public class Shooter extends Subsystems{
         //sets the feedback device (encoder) and type of loop (controlled)
         launcherLeft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-        //allows setinverted to be called
+        //setting sensorphase to true simply allows setinverted to be called
         launcherLeft.setSensorPhase(true);
         launcherRight.setSensorPhase(true);
 
@@ -60,6 +60,7 @@ public class Shooter extends Subsystems{
         launcherLeft.config_kP(Constants.kPIDLoopIdx, Constants.SHOOTER_kP, Constants.kTimeoutMs);
         launcherLeft.config_kI(Constants.kPIDLoopIdx, Constants.SHOOTER_kI, Constants.kTimeoutMs);
         launcherLeft.config_kD(Constants.kPIDLoopIdx, Constants.SHOOTER_kD, Constants.kTimeoutMs);
+        launcherLeft.config_kD(Constants.kPIDLoopIdx, Constants.SHOOTER_kD, Constants.kTimeoutMs);
         launcherLeft.config_kF(Constants.kPIDLoopIdx, Constants.SHOOTER_FEED_FWD, Constants.kTimeoutMs);
         
         launcherLeft.setInverted(true); 
@@ -70,7 +71,7 @@ public class Shooter extends Subsystems{
 
     public  void launch(double speed)   //launches with pid
     {
-        launcherLeft.set(ControlMode.Velocity, speed);
+        launcherLeft.set(ControlMode.Velocity, speed );
         launcherRight.follow(launcherLeft);
     }
 

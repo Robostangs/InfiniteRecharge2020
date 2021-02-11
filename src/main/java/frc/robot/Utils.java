@@ -23,20 +23,6 @@ public class Utils {
         }
     }
 
-    public static double autoHood() {
-
-        double distance = distance();
-        if (distance <= 47.7) {
-            return Constants.LAYUP_POSITION;
-        } else if (distance <= 79.5) {
-            return Utils.autoFormula(47.7, 79.5, -0.7, -0.5);
-        } else if (distance <= 116.5) {
-            return Utils.autoFormula(79.5, 116.5, -0.5, -0.3);
-        } else {
-            return Utils.autoFormula(116.5, 145.65, -0.3, -0.45);
-        }
-    }
-
     public static double dist(double tx, double ty) {
         return Constants.TARGET_HEIGHT / (Math.tan(degToRad(ty + Constants.LIMELIGHT_ANGLE)));
     }

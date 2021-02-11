@@ -1,5 +1,6 @@
 package frc.AutoCommands;
 
+import frc.robot.Constants;
 import frc.robot.Drivetrain;
 import frc.robot.Limelight;
 import frc.robot.Shooter;
@@ -16,7 +17,7 @@ public class lookForTarget extends AutoCommandBase{
 
 	
 
-	public lookForTarget(double timeOut, double power, Boolean isLeft, double shootSpeed,double act){
+	public lookForTarget(double timeOut, double power, Boolean isLeft, double shootSpeed){
 
 		super(timeOut);
 
@@ -24,7 +25,6 @@ public class lookForTarget extends AutoCommandBase{
 
         this.isLeft = isLeft;
         this.shootPower = shootSpeed;
-		this.actPosition = act;
 
 
 	}

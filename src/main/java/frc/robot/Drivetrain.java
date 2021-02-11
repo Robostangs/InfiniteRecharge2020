@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.RobotTests.Drivetraintester;
 
 public class Drivetrain extends Subsystems {
@@ -23,9 +22,10 @@ public class Drivetrain extends Subsystems {
     public double realGyro;
     private AHRS gyro;
     public boolean isPidEnabled = false;
-    private PIDController gyropid;
     private Solenoid shifter;
     private Compressor airBoi;
+
+    private double gyrokP, gyrokI, gyrokD;
 
     public double prevTime;
     public double prevError;
@@ -57,7 +57,6 @@ public class Drivetrain extends Subsystems {
 
         gyro = new AHRS(SPI.Port.kMXP);
    
-
         //set all PID values
         /******************************************************* */
         // Slot 1
@@ -88,6 +87,12 @@ public class Drivetrain extends Subsystems {
         pidControllerLeftFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
         pidControllerRightFront.setOutputRange(Constants.kMinOutput, Constants.kMaxOutput, 2);
 
+        //GYRO
+
+        setGkP(Constants.GYROkP);
+        setGkI(Constants.GYROkI);
+        setGkD(Constants.GYROkD);
+
         /*************************************************************** */
         rightBack.follow(rightFront);
         rightMiddle.follow(rightFront);
@@ -117,6 +122,14 @@ public class Drivetrain extends Subsystems {
 
     public void arcadeDrive(double fwd, double tur) {
         drive(Utils.ensureRange(fwd + tur, -1d, 1d), Utils.ensureRange(fwd - tur, -1d, 1d));
+    }
+
+    public void setCoast(boolean setMode){
+        //set drivetrain to coast mode
+    }
+
+    public void setBrake(boolean setMode){
+        //set drivetrain to brake mode
     }
 
     public void capSpeed(double cap){
@@ -154,6 +167,18 @@ public class Drivetrain extends Subsystems {
 
     public double getRealAngle(){
         return realGyro;
+    }
+
+    public void setGkP(double kP){
+        gyrokP = kP;
+    }
+
+    public void setGkI(double kI){
+        gyrokI = kI;
+    }
+
+    public void setGkD(double kD){
+        gyrokD = kD;
     }
 
     public double getEncoderRight() {
@@ -224,6 +249,7 @@ public class Drivetrain extends Subsystems {
 
     public double autoPidCalculate(double error){
         //for autos, if needed
+        //at the moment these are the same, but good practice to separate pid calculation for autos and teleop
         double timeChange = (System.nanoTime()/1000000000.0)-prevTime;
         if(timeChange == 0){
             timeChange = 100;

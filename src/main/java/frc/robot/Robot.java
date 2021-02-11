@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
   public static Shooter sh;
   public static Intake it;
   public static TeleOp tp;
+  public static TeleOpTester tpt;
   public static AutoMode phillip;
   public static PowerDistributionPanel pdp;
   public double gyroStart;
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
     Climber.getInstance();
     it = Intake.getInstance();
     tp = TeleOp.getInstance();
+    tpt = TeleOpTester.getInstance();
     Limelight.getInstance();
     Limelight.ledsOff();
     pdp = new PowerDistributionPanel();
@@ -112,26 +114,20 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     
-    SmartDashboard.putNumber("Jeff", 0);
-    SmartDashboard.putNumber("Hood Position", 0);
-
-    SmartDashboard.putNumber("Gyro kP", 0);
-    SmartDashboard.putNumber("Gyro kI", 0);
-    SmartDashboard.putNumber("Gyro kD", 0); 
+    SmartDashboard.putNumber("Jeff", 0);  //(Shooter velocity) consult Dan for more info on naming this variable
     
-    SmartDashboard.putNumber("kP 2", 0);
-    SmartDashboard.putNumber("kI 2", 0);
-    SmartDashboard.putNumber("kD 2", 0);
 
-/*
-    SmartDashboard.putNumber("Shooter kP", 0);
-    SmartDashboard.putNumber("Shooter kI", 0);
-    SmartDashboard.putNumber("Shooter kD", 0);
-    SmartDashboard.putNumber("Shooter kF", 0);
-*/
+    SmartDashboard.putNumber("Gyro kP", Constants.GYROkP);
+    SmartDashboard.putNumber("Gyro kI", Constants.GYROkI);
+    SmartDashboard.putNumber("Gyro kD", Constants.GYROkD); 
+  
 
-    SmartDashboard.putNumber("Jeff", 0);
-    SmartDashboard.putNumber("Hood Position", 0);
+
+    SmartDashboard.putNumber("Shooter kP", Constants.SHOOTER_kP);
+    //SmartDashboard.putNumber("Shooter kI", 0);
+    SmartDashboard.putNumber("Shooter kD", Constants.SHOOTER_kD);
+    //SmartDashboard.putNumber("Shooter kF", 0);
+
 
   }
   
@@ -141,6 +137,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     TeleOp.run();
+    //TeleOpTester.run();
     dt.feedValues();
   }
 

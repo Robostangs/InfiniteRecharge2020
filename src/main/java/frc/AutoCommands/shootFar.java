@@ -44,7 +44,7 @@ public class shootFar extends AutoCommandBase {
 
        
 
-        Timer.delay(3);
+        Timer.delay(1);
 
         intake.beltMove(beltSpeed);
         
@@ -53,6 +53,9 @@ public class shootFar extends AutoCommandBase {
     @Override
     public void end() {
 
+        shooter.hoodBack();
+        shooter.stop();
+        intake.stop();
     }
 
     @Override

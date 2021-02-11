@@ -2,8 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TeleOp {
+public class TeleOpTester {
 
+    /*
+        This class is a clone of the TeleOp class
+        that allows for the manual input of various
+        values during Teleoperated mode...
+    */
     public static Drivetrain dt = Drivetrain.getInstance();
     public static Shooter shooter = Shooter.getInstance();
     public static Intake intake = Intake.getInstance();
@@ -11,7 +16,7 @@ public class TeleOp {
 
     private static XBoxController driver;
     private static XBoxController manip;
-    public static TeleOp instance;
+    public static TeleOpTester instance;
 
     private static boolean previousSensorValue;
     private static boolean previousLowSensorValue;
@@ -22,13 +27,13 @@ public class TeleOp {
     public static boolean elevLEDS;
     public static boolean shootingLEDS;
 
-    public static TeleOp getInstance() {
+    public static TeleOpTester getInstance() {
         if (instance == null)
-            instance = new TeleOp();
+            instance = new TeleOpTester();
         return instance;
     }
 
-    private TeleOp() {
+    private TeleOpTester() {
         driver = new XBoxController(Constants.XBOX_DRIVER);
         manip = new XBoxController(Constants.XBOX_MANIP);
 
@@ -44,32 +49,36 @@ public class TeleOp {
     public static void run() {
 
         smartDashboard();
+        
+
+
+
         Limelight.refresh();
 
-        //PID VALUES
-        shooter.setkP(Constants.SHOOTER_kP);
+        //P and I set manually in shuffleboard
         shooter.setkI(Constants.SHOOTER_kI);
-        shooter.setkD(Constants.SHOOTER_kD);
         shooter.setkF(Constants.SHOOTER_FEED_FWD);
 
 
 
         /* DRIVER CONTROLS */
         
-
-        //limelight tracking
         if (driver.getLeftBumper()) {
             if (Limelight.getTv() == 1) {
                 Limelight.ledsOn();
            
+
                 dt.setAngle(dt.getAHRS() + Limelight.getTx());
-         
                 dt.targetedDrive(Utils.expodeadZone(-driver.getRightStickYAxis())); // allows driver to move back and forth during lineup
 
+
                 if(manip.getYButton() == false){
-                    shooter.hoodForward();  //manip can override hood position with Y if shooting close
+                    shooter.hoodForward();
                 }
            
+                
+               
+
             } else {
                 Limelight.ledsFlash();
                 //dt.pidDisable();
@@ -85,8 +94,6 @@ public class TeleOp {
 
             Limelight.ledsOff();
             //dt.pidDisable();
-
-            //Unless driver is holding leftbumper manual drive is always active
             dt.arcadeDrive(Utils.expodeadZone(-driver.getRightStickYAxis()), Utils.expodeadZone(-driver.getLeftStickXAxis()));
         }
 
@@ -127,8 +134,7 @@ public class TeleOp {
             shooter.hoodForward();
             Limelight.ledsOn();
 
-
-            shooter.launch(Utils.autoPower());
+            shooter.launch(SmartDashboard.getNumber("Jeff", 0));
 
             if(manip.getLeftStickYAxis() < -0.2){
                 intake.beltMove(1.0);                   
@@ -153,7 +159,7 @@ public class TeleOp {
         } 
         else if (manip.getYButton()) {
             dt.compressorOff();
-            //shooter.launchNoPID(SmartDashboard.getNumber("Jeff", 0));
+
             //layups / close range
             shooter.hoodBack();
             shooter.launch((50.0 / 15.0) * Constants.LAYUP_SPEED);
@@ -216,20 +222,16 @@ public class TeleOp {
 
         
 
+        shooter.setkP(SmartDashboard.getNumber("Shooter kP", Constants.SHOOTER_kP));
+        shooter.setkD(SmartDashboard.getNumber("Shooter kD", Constants.SHOOTER_kD));
+
+        dt.setGkP(SmartDashboard.getNumber("Gyro kP", Constants.GYROkP));
+        dt.setGkI(SmartDashboard.getNumber("Gyro kI", Constants.GYROkI));
+        dt.setGkD(SmartDashboard.getNumber("Gyro kD", Constants.GYROkD));
+
         SmartDashboard.putNumber("Gyro #", dt.getAHRS());
 
         
-      
-
-        // drivetrain set values
-
-
-        /*dt.setkP2(SmartDashboard.getNumber("kP 2", 0));
-        dt.setkI2(SmartDashboard.getNumber("kI 2", 0));
-        dt.setkD2(SmartDashboard.getNumber("kD 2", 0));*/
-
-
-        //speed = SmartDashboard.getNumber("Jeff", speed);
 
         double distance = Utils.dist(Limelight.getTx(), Limelight.getTy());
 

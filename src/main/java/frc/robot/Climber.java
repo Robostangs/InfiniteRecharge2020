@@ -8,8 +8,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber extends Subsystems {
+
     public static Climber instance;
-    public TalonFX leftClimber, rightClimber;
+    public TalonFX leftClimber, rightClimber;   //two climber talons
     public Solenoid cylinder;
     public DigitalInput stopper;
 

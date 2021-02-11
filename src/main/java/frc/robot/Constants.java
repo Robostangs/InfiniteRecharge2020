@@ -10,7 +10,7 @@ public class Constants
 
 	public static final double SHOOTER_kP = 0.15;
 	public static final double SHOOTER_kI = 0;
-	public static final double SHOOTER_kD = 5;
+	public static final double SHOOTER_kD = 4;
 	public static final double SHOOTER_FEED_FWD = .048;
 
 	public static final int XBOX_DRIVER = 0;
